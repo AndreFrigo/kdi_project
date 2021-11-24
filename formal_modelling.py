@@ -1,6 +1,24 @@
 import csv
 
 
+#print the dataset as in the csv files
+def printDataset(dataset):
+    print("PRINTING DATASET")
+    schema = [el for el in dataset]
+    print(schema)
+    #number of objects, it is supposed that the first column is complete
+    numElem = len(dataset[schema[0]])
+    i=0
+    while(i<numElem):
+        row = '\''
+        for elem in schema:
+            try:
+                row += str(dataset[elem][i])+"\', '"
+            except:
+                row += "\', '"
+        print(row[:-1])
+        i+=1
+
 
 #read the csv files and modify the datasets according to the ETG
 #input: single csv file name including relative path(string)
@@ -42,8 +60,8 @@ def createDataset(datasetList):
 #output: the dataset with the correct schema (objects are not modified here!)
 def modifySchema(oldDataset):
     #TODO: descrizione and descrizione breve, what to do? For now saved both in ATT
-    newSchema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Description_breve','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
-    print(newSchema)
+    newSchema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description_breve','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    # print(newSchema)
     dataset = {}
     for elem in newSchema:
         dataset[elem]=[]
@@ -90,6 +108,8 @@ dataset = createDataset(datasetList)
 #     for elem in dataset[col]:
 #         print(type(elem))
 
-modifySchema(dataset)
+d=modifySchema(dataset)
+
+printDataset(d)
 
 
