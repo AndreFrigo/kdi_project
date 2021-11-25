@@ -31,3 +31,15 @@ def castFloat(listElem, default):
         else:
             ret.append(float(default))
     return ret
+
+#cast a list of strings into a list of positive integers
+#input: the list of string elements to be cast, the default value for missing elements (blanks)
+def castInt(listElem, default):
+    ret = []
+    for elem in listElem:
+        #the string is an integer or float
+        if(re.match('^[0-9]+$', elem)):
+            ret.append(int(elem))
+        else:
+            ret.append(int(default))
+    return ret
