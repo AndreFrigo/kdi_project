@@ -1,24 +1,5 @@
 import csv
-
-
-#print the dataset as in the csv files
-def printDataset(dataset):
-    print("PRINTING DATASET")
-    schema = [el for el in dataset]
-    print(schema)
-    #number of objects, it is supposed that the first column is complete
-    numElem = len(dataset[schema[0]])
-    i=0
-    while(i<numElem):
-        row = '\''
-        for elem in schema:
-            try:
-                row += str(dataset[elem][i])+"\', '"
-            except:
-                row += "\', '"
-        print(row[:-1])
-        i+=1
-
+import common_functions as cf
 
 #read the csv files and modify the datasets according to the ETG
 #input: single csv file name including relative path(string)
@@ -85,6 +66,10 @@ def modifySchema(oldDataset):
     #TODO: what to do with the 'Email' column?
     if 'Telefono' in oldDataset: dataset['COM:Telephone'].extend(oldDataset['Telefono'])
 
+    #list for columns that have no information (TODO: better filling of the dataset)
+    noValues=['' for e in dataset['ATT:Id']]
+    for elem in dataset:
+        if(len(dataset[elem])==0): dataset[elem].extend(noValues)
     return dataset
     
 
@@ -92,8 +77,33 @@ def modifySchema(oldDataset):
 #modify the type of the elements in the dataset according to the type specified in the ETG, for default each element is a string
 #nb the dictionary is passed by sharing and is a mutable object, so the modifications done inside the function are applied to the original dataset
 #input: the dataset to modify
-def castDataset(dataset):
-    pass
+def castDataset(oldDataset):
+    # create new dataset with the same schema
+    dataset = {}
+    for elem in oldDataset:
+        dataset[elem]=[]
+    
+    #schema type list
+    floatList = ['COM:Price','LOC:Latitude','LOC:Longitude']
+    intList = ['ADD:PostalCode']
+    #TODO: descrizione breve
+    stringList = ['ADD:City','ADD:Commune','ATT:Description','ATT:Description_breve','ATT:Id','COM:Id','LOC:Id','ADD:Id','ATT:Name','COM:Name','COM:OpeningHours','ADD:Province','ADD:Street','ADD:StreetNumber','COM:Telephone','ATT:Type','COM:Url']
+    booleanString = ['ATT:ParkingArea']
+
+    for elem in floatList:
+        dataset[elem].extend(cf.castFloat(oldDataset[elem], -1))
+    
+    for elem in intList:
+        dataset[elem].extend(cf.castInt(oldDataset[elem], -1))
+    
+    for elem in stringList:
+        dataset[elem].extend(oldDataset[elem])
+    
+    for elem in booleanString:
+        #TODO
+        pass
+    
+    return dataset
 
 
 
@@ -103,13 +113,10 @@ datasetList = getCSV("test.csv")
 createDataset(datasetList)
 
 dataset = createDataset(datasetList)
-# for col in dataset:
-#     print("-----"+col+"-----")
-#     for elem in dataset[col]:
-#         print(type(elem))
 
 d=modifySchema(dataset)
 
-printDataset(d)
+dataset = castDataset(d)
 
+# cf.printDataset(dataset)
 
