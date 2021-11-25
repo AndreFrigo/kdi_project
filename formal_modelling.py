@@ -112,13 +112,8 @@ datasetList = getCSV("../csv_datasets_KDI/CSV_POI/male.csv")
 
 dataset = createDataset(datasetList)
 
-
 d=modifySchema(dataset)
 
 dataset = castDataset(d)
 
-cf.printDataset(dataset, True)
-
-
-prova="allagriglia,"
-print(prova[:-1])
+# cf.printDataset(dataset, True)
