@@ -1,21 +1,25 @@
 import re
 
-#print the dataset as in the csv files
-def printDataset(dataset):
-    print("PRINTING DATASET")
+#print the dataset as in the csv files, if 'number' is true it prints the element number
+def printDataset(dataset, number=False):
+    print("PRINTING DATASET\n\n")
+    print('SCHEMA\n')
     schema = [el for el in dataset]
     print(schema)
+    print('\n')
     #number of objects, it is supposed that the first column is complete
     numElem = len(dataset[schema[0]])
     i=0
     while(i<numElem):
+        if(number): print('OBJECT '+str(i)+'\n')
         row = '\''
         for elem in schema:
             try:
                 row += str(dataset[elem][i])+"\', '"
             except:
                 row += "\', '"
-        print(row[:-1])
+        print(row[:-3])
+        print('\n\n')
         i+=1
 
 
