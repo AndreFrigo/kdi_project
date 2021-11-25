@@ -108,15 +108,17 @@ def castDataset(oldDataset):
 
 
 #populate data with the values from the csv dataset
-datasetList = getCSV("test.csv")
-
-createDataset(datasetList)
+datasetList = getCSV("../csv_datasets_KDI/CSV_POI/male.csv")
 
 dataset = createDataset(datasetList)
+
 
 d=modifySchema(dataset)
 
 dataset = castDataset(d)
 
-# cf.printDataset(dataset)
+cf.printDataset(dataset, True)
 
+
+prova="allagriglia,"
+print(prova[:-1])
