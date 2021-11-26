@@ -1,8 +1,9 @@
 import re
 
 #print the dataset as in the csv files, if 'number' is true it prints the element number
+#input: the dataset to print (a dictionary with keys the schema elements and values the list of attribute elements), the boolean for printing the object number
 def printDataset(dataset, number=False):
-    print("PRINTING DATASET\n\n")
+    print("PRINTING DATASET\n")
     print('SCHEMA\n')
     schema = [el for el in dataset]
     print(schema)
@@ -21,6 +22,14 @@ def printDataset(dataset, number=False):
         print(row[:-3])
         print('\n\n')
         i+=1
+
+#get a list with the name of the csv files
+#input: txt file containing the list (ls CSV_POI > csv.txt), default 'csv.txt'
+#output: list containing the name of the csv files
+def getListCSV(csvList='csv.txt'):
+    with open(csvList) as f:
+        csv_files = f.readlines()
+        return [e.rstrip() for e in csv_files]
 
 
 
