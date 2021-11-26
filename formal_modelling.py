@@ -108,7 +108,11 @@ def castDataset(oldDataset):
 
 
 #populate data with the values from the csv dataset
-datasetList = getCSV("../csv_datasets_KDI/CSV_POI/male.csv")
+#just an example to test
+datasetList = getCSV("CSV_POI/mezzana.csv")
+
+# #list of csv file names
+# print(cf.getListCSV())
 
 dataset = createDataset(datasetList)
 
