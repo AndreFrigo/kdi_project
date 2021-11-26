@@ -47,6 +47,9 @@ def modifySchema(oldDataset):
     for elem in newSchema:
         dataset[elem]=[]
     
+    #TODO:handle string scraping for description and address (oldDataset) and insert information in the right place of newDataset as the code above
+
+
     #manually map the old schema to the new one
     if 'remoteId' in oldDataset: dataset['ATT:Id'].extend(oldDataset['remoteId'])
     if 'Titolo' in oldDataset: dataset['ATT:Name'].extend(oldDataset['Titolo'])
