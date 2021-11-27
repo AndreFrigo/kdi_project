@@ -1,10 +1,14 @@
 import csv
 import common_functions as cf
+import pandas as pd
 
 #read the csv files and modify the datasets according to the ETG
 #input: single csv file name including relative path(string)
 #output: list containing the csv data
+commune=""
 def getCSV(filename):
+    global commune
+    commune=filename.split("/")[1]
     dataset = []
     try:
         with open(filename) as csv_file:
@@ -48,7 +52,7 @@ def modifySchema(oldDataset):
         dataset[elem]=[]
     
     #TODO:handle string scraping for description and address (oldDataset) and insert information in the right place of newDataset as the code above
-
+    split_adress(oldDataset)
 
     #manually map the old schema to the new one
     if 'remoteId' in oldDataset: dataset['ATT:Id'].extend(oldDataset['remoteId'])
@@ -74,7 +78,58 @@ def modifySchema(oldDataset):
     for elem in dataset:
         if(len(dataset[elem])==0): dataset[elem].extend(noValues)
     return dataset
+def has_numbers(inputString):
+     return any(char.isdigit() for char in inputString)
+def split_adress(oldDataset):
+    city_list= pd.read_csv("./list_city.csv", usecols=["Name"])
+    if 'address' in oldDataset:         
+        #for each ligne split it 
+        for address in oldDataset["address"]:
+            if(address!=""):
+                print("----------------")
+                global commune
+                print(address)
+                print("commune: "+commune)
+                value=address.split(",")
+                #for each check if we have :
+                for element in value:
+                    # the postal code
+                    number=element
+                    number=number.replace(" ", "")
+                    province=element
+                    province=province.replace(" ", "")
+                    #check if there is a number inside the text
+                    if(has_numbers(element)):
+                        element=element.split(" ")
+                        for elem in element:
+                            if(elem.isdigit() and int(elem)>38000):
+                                print("this element is a postal code:"+elem)
+                            if(elem.isdigit() and int(elem)<999):
+                                print("this element is a number of street:"+elem)
+                    # the street
+                    elif("Piazza" in element or "Via" in element or "Strada" in element or "Passo" in element):
+                        print("this element is the street:"+element)  
+                    # the province
+                    elif(len(province)==2 and not province.isdigit()):
+                        print("this element is the province:"+province)
+                    #city
+                    elif("Trentino" in element):
+                        print("this element is the region:"+province)
+                    else:
+                        element=element.replace(" ", "")
+                        for city in city_list["Name"]:
+                            city2=city
+                            city=city.replace(" ", "")
+                            if(city.lower() in element.lower()):
+                                print("this element is the city:"+city2)
+                    #commune
+    if 'Comune' in oldDataset:
+         print(oldDataset["Comune"])
+
+    if 'Indirizzo' in oldDataset:
+        print(oldDataset["Indirizzo"])
     
+
 
 
 #modify the type of the elements in the dataset according to the type specified in the ETG, for default each element is a string
@@ -112,7 +167,7 @@ def castDataset(oldDataset):
 
 #populate data with the values from the csv dataset
 #just an example to test
-datasetList = getCSV("CSV_POI/mezzana.csv")
+datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
 
 # #list of csv file names
 # print(cf.getListCSV())
@@ -121,6 +176,6 @@ dataset = createDataset(datasetList)
 
 d=modifySchema(dataset)
 
-dataset = castDataset(d)
+#dataset = castDataset(d)
 
 # cf.printDataset(dataset, True)
