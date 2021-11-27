@@ -81,15 +81,20 @@ def modifySchema(oldDataset):
 def has_numbers(inputString):
      return any(char.isdigit() for char in inputString)
 def split_adress(oldDataset):
+    column_names=['ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    dataset_adress=[]
     city_list= pd.read_csv("./list_city.csv", usecols=["Name"])
     if 'address' in oldDataset:         
         #for each ligne split it 
         for address in oldDataset["address"]:
+            list_adress=["","",0,"","",0]
             if(address!=""):
-                print("----------------")
+               
+                #print("----------------")
                 global commune
-                print(address)
-                print("commune: "+commune)
+                #print(address)
+                #print("commune: "+commune)
+                list_adress[1]=commune
                 value=address.split(",")
                 #for each check if we have :
                 for element in value:
@@ -100,34 +105,43 @@ def split_adress(oldDataset):
                     province=province.replace(" ", "")
                     #check if there is a number inside the text
                     if(has_numbers(element)):
-                        element=element.split(" ")
-                        for elem in element:
+                        element2=element.split(" ")
+                        for elem in element2:
                             if(elem.isdigit() and int(elem)>38000):
-                                print("this element is a postal code:"+elem)
+                                #print("this element is a postal code:"+elem)
+                                list_adress[2]=elem
                             if(elem.isdigit() and int(elem)<999):
-                                print("this element is a number of street:"+elem)
+                                #print("this element is a number of street:"+elem)
+                                list_adress[5]=elem
                     # the street
-                    elif("Piazza" in element or "Via" in element or "Strada" in element or "Passo" in element):
-                        print("this element is the street:"+element)  
+                    if("Piazza" in element or "Via" in element or "Strada" in element or "Passo" in element):
+                        #print("this element is the street:"+element)
+                        list_adress[4]=element  
                     # the province
-                    elif(len(province)==2 and not province.isdigit()):
-                        print("this element is the province:"+province)
+                    if(len(province)==2 and not province.isdigit()):
+                        #print("this element is the province:"+province)
+                        list_adress[3]=element
                     #city
-                    elif("Trentino" in element):
+                    if("Trentino" in element):
                         print("this element is the region:"+province)
-                    else:
-                        element=element.replace(" ", "")
-                        for city in city_list["Name"]:
-                            city2=city
-                            city=city.replace(" ", "")
-                            if(city.lower() in element.lower()):
-                                print("this element is the city:"+city2)
+                    element=element.replace(" ", "")
+                    for city in city_list["Name"]:
+                        city2=city
+                        city=city.replace(" ", "")
+                        if(city.lower() in element.lower()):
+                            #print("this element is the city:"+city2)
+                            list_adress[0]=city2
                     #commune
+            print(list_adress)
+            dataset_adress.append(list_adress)
+    dataset_adress=pd.DataFrame(dataset_adress,columns=column_names)
     if 'Comune' in oldDataset:
-         print(oldDataset["Comune"])
+        print("")
 
     if 'Indirizzo' in oldDataset:
         print(oldDataset["Indirizzo"])
+    
+    return dataset_adress
     
 
 
