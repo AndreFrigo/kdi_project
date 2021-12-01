@@ -162,6 +162,19 @@ def split_adress(oldDataset):
     return dataset_adress
     
 
+#remove unuseful elements
+#input: the dataset with the schema already aligned and the list of interesting category for the elements
+#output: the dataset with only interesting elements inside 
+def cleanDataset(oldDataset, interesting_categories):
+    # create new dataset with the same schema
+    dataset = {}
+    for elem in oldDataset:
+        dataset[elem]=[]
+    for i in range(0, len(oldDataset['ATT:Id'])):
+        if(oldDataset['ATT:Type'][i] in interesting_categories):
+            for elem in oldDataset:
+                dataset[elem].append(oldDataset[elem][i])
+    return dataset
 
 
 #modify the type of the elements in the dataset according to the type specified in the ETG, for default each element is a string
@@ -204,10 +217,24 @@ datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
 # #list of csv file names
 # print(cf.getListCSV())
 
+# for elem in cf.getListCSV():
+#     dataset = getCSV("CSV_POI/"+str(elem))
+#     dataset = createDataset(datasetList)
+
+#     dataset=modifySchema(dataset)
+
+#     dataset = cleanDataset(dataset, cf.getInterestingCategories())
+
+#     dataset = castDataset(dataset)
+
+#     cf.printDataset(dataset, True)
+
 dataset = createDataset(datasetList)
 
-d=modifySchema(dataset)
+dataset=modifySchema(dataset)
 
-#dataset = castDataset(d)
+dataset = cleanDataset(dataset, cf.getInterestingCategories())
 
-# cf.printDataset(dataset, True)
+dataset = castDataset(dataset)
+
+cf.printDataset(dataset, True)
