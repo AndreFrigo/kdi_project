@@ -94,7 +94,7 @@ def split_adress(oldDataset):
                 global commune
                 #print(address)
                 #print("commune: "+commune)
-                list_adress[1]=commune
+                list_adress[1]=commune.split(".")[0]
                 value=address.split(",")
                 #for each check if we have :
                 for element in value:
