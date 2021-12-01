@@ -56,3 +56,17 @@ def castInt(listElem, default):
         else:
             ret.append(int(default))
     return ret
+
+#list of interesting categories for both csv and json files
+#input: txt file with the interesting categories
+#output: the list of interesting categories
+def getInterestingCategories(interestingCategoriesFile='categories.txt'):
+    ret = []
+    try:
+        with open(interestingCategoriesFile) as f:
+            intCat = f.readlines()
+            for elem in intCat:
+                ret.append(elem.rstrip())
+    except:
+        pass
+    return ret
