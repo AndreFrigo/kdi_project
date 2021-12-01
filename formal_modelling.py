@@ -45,7 +45,7 @@ def createDataset(datasetList):
 #output: the dataset with the correct schema (objects are not modified here!)
 def modifySchema(oldDataset):
     #TODO: descrizione and descrizione breve, what to do? For now saved both in ATT
-    newSchema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description_breve','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    newSchema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     # print(newSchema)
     dataset = {}
     for elem in newSchema:
@@ -57,8 +57,6 @@ def modifySchema(oldDataset):
     #manually map the old schema to the new one
     if 'remoteId' in oldDataset: dataset['ATT:Id'].extend(oldDataset['remoteId'])
     if 'Titolo' in oldDataset: dataset['ATT:Name'].extend(oldDataset['Titolo'])
-    if 'Descrizione' in oldDataset: dataset['ATT:Description'].extend(oldDataset['Descrizione'])
-    if 'Descrizione breve' in oldDataset: dataset['ATT:Description_breve'].extend(oldDataset['Descrizione breve'])
     if 'Tipologia di luogo' in oldDataset: dataset['ATT:Type'].extend(oldDataset['Tipologia di luogo'])
     if 'lat' in oldDataset: dataset['LOC:Latitude'].extend(oldDataset['lat'])
     if 'lon' in oldDataset: dataset['LOC:Longitude'].extend(oldDataset['lon'])
@@ -88,6 +86,24 @@ def modifySchema(oldDataset):
         dataset['COM:Url'].extend(oldDataset['Indirizzo web'])
     elif 'Leggi le informazioni dettagliate' in oldDataset:
         dataset['COM:Url'].extend(oldDataset['Leggi le informazioni dettagliate'])
+    #if there are both descrizione breve and descrizione merge them, otherwise put the info known
+    if 'Descrizione breve' in oldDataset and 'Descrizione' in oldDataset:
+        length = len(oldDataset['Descrizione'])
+        for i in range (0, length):
+            descB = oldDataset['Descrizione breve'][i]
+            desc = oldDataset['Descrizione'][i]
+            if(descB and desc):
+                dataset["ATT:Description"].append(str(descB)+" "+str(desc))
+            elif(descB):
+                dataset["ATT:Description"].append(descB)
+            elif(desc):
+                dataset["ATT:Description"].append(desc)
+            else:
+                dataset["ATT:Description"].append('')
+    elif 'Desrizione breve' in oldDataset:
+        dataset['ATT:Description'].extend(oldDataset['Descrizione breve'])
+    elif 'Descrizione' in oldDataset:
+        dataset['ATT:Description'].extend(oldDataset['Descrizione'])
 
 
     #list for columns that have no information (TODO: better filling of the dataset)
@@ -189,8 +205,7 @@ def castDataset(oldDataset):
     #schema type list
     floatList = ['COM:Price','LOC:Latitude','LOC:Longitude']
     intList = ['ADD:PostalCode']
-    #TODO: descrizione breve
-    stringList = ['ADD:City','ADD:Commune','ATT:Description','ATT:Description_breve','ATT:Id','COM:Id','LOC:Id','ADD:Id','ATT:Name','COM:Name','COM:OpeningHours','ADD:Province','ADD:Street','ADD:StreetNumber','COM:Telephone','ATT:Type','COM:Url']
+    stringList = ['ADD:City','ADD:Commune','ATT:Description','ATT:Id','COM:Id','LOC:Id','ADD:Id','ATT:Name','COM:Name','COM:OpeningHours','ADD:Province','ADD:Street','ADD:StreetNumber','COM:Telephone','ATT:Type','COM:Url']
     booleanString = ['ATT:ParkingArea']
 
     for elem in floatList:
@@ -219,15 +234,16 @@ datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
 
 # for elem in cf.getListCSV():
 #     dataset = getCSV("CSV_POI/"+str(elem))
+
 #     dataset = createDataset(datasetList)
 
 #     dataset=modifySchema(dataset)
 
-#     dataset = cleanDataset(dataset, cf.getInterestingCategories())
+#     # dataset = cleanDataset(dataset, cf.getInterestingCategories())
 
 #     dataset = castDataset(dataset)
 
-#     cf.printDataset(dataset, True)
+#     # cf.printDataset(dataset, True)
 
 dataset = createDataset(datasetList)
 
