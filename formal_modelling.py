@@ -41,6 +41,16 @@ def createDataset(datasetList):
                 col+=1
     return dataset
 
+def createDatasetJson(dataframe):
+    dataset = {}
+    for elem in dataframe.columns:
+        dataset[elem]=[]
+    for elem in dataframe.columns:
+        dataset[elem].extend([str(el) for el in dataframe[elem].values])
+        
+    return dataset
+
+
 #modify the schema of the dataset according to the ETG
 #input: the dataset to modify
 #output: the dataset with the correct schema (objects are not modified here!)
@@ -234,14 +244,14 @@ def Read_JSON():
     dataset=[]
     dataset_JSON=pd.DataFrame(columns=column_names)
     data = json.load(f)
-    for i in range(2892):
+    for i in range(2893):
         line=["","",False,"","","","","",0,"","","",0.0,0.0,"","","",0,"","",""]
         line[1]=data[str(i)]["content"]["objData"]["name"]["IT"]
         line[3]=data[str(i)]["content"]["objData"]["description"]["IT"]
         #+"\n"+data[str(i)]["content"]["objData"]["serviceDescription"]
         line[4]=data[str(i)]["content"]["objData"]["category"]
         if(data[str(i)]["content"]["poiData"]["contact"]!=None and data[str(i)]["content"]["poiData"]["contact"]["name"]!={} ):
-            line[6]=data[str(i)]["content"]["poiData"]["contact"]["name"]
+            line[6]=data[str(i)]["content"]["poiData"]["contact"]["name"]["IT"]
         if(data[str(i)]["content"]["poiData"]["timetable"] != {}):
             line[7]=data[str(i)]["content"]["poiData"]["timetable"]
         if(data[str(i)]["content"]["poiData"]["contact"]!=None):
@@ -286,8 +296,9 @@ def Read_JSON():
             line[19]=street
         dataset.append(line)
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
-    dataset_JSON.to_csv(r'myData.csv',sep=';',index=True)
+    # dataset_JSON.to_csv(r'myData.csv',sep=';',index=True)
     f.close()
+    return dataset_JSON
 
 
 #populate data with the values from the csv dataset
@@ -310,14 +321,19 @@ datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
 
 #     # cf.printDataset(dataset, True)
 
-dataset = createDataset(datasetList)
+# dataset = createDataset(datasetList)
 
-dataset=modifySchema(dataset)
+# dataset=modifySchema(dataset)
+
+dataset = createDatasetJson(Read_JSON())
+
+
+        
+
 
 dataset = cleanDataset(dataset, cf.getInterestingCategories())
 
 dataset = castDataset(dataset)
 
-# cf.printDataset(dataset, True)
+cf.printDataset(dataset, True)
 
-Read_JSON()
