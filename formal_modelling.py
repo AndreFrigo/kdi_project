@@ -52,7 +52,7 @@ def modifySchema(oldDataset):
         dataset[elem]=[]
     
     #TODO:handle string scraping for description and address (oldDataset) and insert information in the right place of newDataset as the code above
-    split_adress(oldDataset)
+    add = split_adress(oldDataset)
 
     #manually map the old schema to the new one
     if 'remoteId' in oldDataset: dataset['ATT:Id'].extend(oldDataset['remoteId'])
@@ -62,10 +62,12 @@ def modifySchema(oldDataset):
     if 'Tipologia di luogo' in oldDataset: dataset['ATT:Type'].extend(oldDataset['Tipologia di luogo'])
     if 'lat' in oldDataset: dataset['LOC:Latitude'].extend(oldDataset['lat'])
     if 'lon' in oldDataset: dataset['LOC:Longitude'].extend(oldDataset['lon'])
-    #TODO: map the address where? only 'address', 'indirizzo' and 'comune' from the csv
-    if 'address' in oldDataset: dataset['ADD:Street'].extend(oldDataset['address'])
-    if 'Comune' in oldDataset: dataset['ADD:Commune'].extend(oldDataset['Comune'])
-    if 'Indirizzo' in oldDataset: dataset['ADD:City'].extend(oldDataset['Indirizzo'])
+    dataset['ADD:Street'].extend(add['ADD:Street'])
+    dataset['ADD:Commune'].extend(add['ADD:Commune'])
+    dataset['ADD:City'].extend(add['ADD:City'])
+    dataset['ADD:PostalCode'].extend(add['ADD:PostalCode'])
+    dataset['ADD:Province'].extend(add['ADD:Province'])
+    dataset['ADD:StreetNumber'].extend(add['ADD:StreetNumber'])
     #TODO: what to do with the 'Informazioni' column?
     #TODO: what to do with the 'Leggi le informazioni dettagliate' column?
     if 'Impianto gestito da' in oldDataset: dataset['COM:Name'].extend(oldDataset['Impianto gestito da'])
@@ -87,7 +89,7 @@ def split_adress(oldDataset):
     if 'address' in oldDataset:         
         #for each ligne split it 
         for address in oldDataset["address"]:
-            list_adress=["","",0,"","",0]
+            list_adress=["","","0","","","0"]
             if(address!=""):
                
                 #print("----------------")
@@ -123,7 +125,8 @@ def split_adress(oldDataset):
                         list_adress[3]=element
                     #city
                     if("Trentino" in element):
-                        print("this element is the region:"+province)
+                        # print("this element is the region:"+province)
+                        pass
                     element=element.replace(" ", "")
                     for city in city_list["Name"]:
                         city2=city
@@ -132,14 +135,14 @@ def split_adress(oldDataset):
                             #print("this element is the city:"+city2)
                             list_adress[0]=city2
                     #commune
-            print(list_adress)
+            # print(list_adress)
             dataset_adress.append(list_adress)
     dataset_adress=pd.DataFrame(dataset_adress,columns=column_names)
-    if 'Comune' in oldDataset:
-        print("")
+    # if 'Comune' in oldDataset:
+    #     print("")
 
-    if 'Indirizzo' in oldDataset:
-        print(oldDataset["Indirizzo"])
+    # if 'Indirizzo' in oldDataset:
+    #     print(oldDataset["Indirizzo"])
     
     return dataset_adress
     
