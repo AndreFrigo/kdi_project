@@ -71,9 +71,24 @@ def modifySchema(oldDataset):
     #TODO: what to do with the 'Informazioni' column?
     #TODO: what to do with the 'Leggi le informazioni dettagliate' column?
     if 'Impianto gestito da' in oldDataset: dataset['COM:Name'].extend(oldDataset['Impianto gestito da'])
-    if 'Indirizzo web' in oldDataset: dataset['COM:Url'].extend(oldDataset['Indirizzo web'])
-    #TODO: what to do with the 'Email' column?
     if 'Telefono' in oldDataset: dataset['COM:Telephone'].extend(oldDataset['Telefono'])
+    #put in url the indirizzo web, if it doesn't have the value then put the informazioni dettagliate
+    if 'Indirizzo web' in oldDataset and 'Leggi le informazioni dettagliate' in oldDataset:
+        length = len(oldDataset['Indirizzo web'])
+        for i in range (0, length):
+            indirizzoWeb = oldDataset['Indirizzo web'][i]
+            informazioniDettagliate = oldDataset['Leggi le informazioni dettagliate'][i]
+            if(indirizzoWeb):
+                dataset["COM:Url"].append(indirizzoWeb)
+            elif(informazioniDettagliate):
+                dataset["COM:Url"].append(informazioniDettagliate)
+            else:
+                dataset["COM:Url"].append('')
+    elif 'Indirizzo web' in oldDataset:
+        dataset['COM:Url'].extend(oldDataset['Indirizzo web'])
+    elif 'Leggi le informazioni dettagliate' in oldDataset:
+        dataset['COM:Url'].extend(oldDataset['Leggi le informazioni dettagliate'])
+
 
     #list for columns that have no information (TODO: better filling of the dataset)
     noValues=['' for e in dataset['ATT:Id']]
