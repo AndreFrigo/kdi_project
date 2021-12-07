@@ -181,7 +181,7 @@ def split_adress(oldDataset):
 #remove unuseful elements
 #input: the dataset with the schema already aligned and the list of interesting category for the elements
 #output: the dataset with only interesting elements inside 
-def cleanDataset(oldDataset, interesting_categories):
+def cleanDataset(oldDataset, interesting_categories=cf.getInterestingCategories()):
     # create new dataset with the same schema
     dataset = {}
     for elem in oldDataset:
@@ -223,11 +223,11 @@ def castDataset(oldDataset):
     
     return dataset
 
-def Read_JSON():
+def Read_JSON(jsonFile="POI_Trentino.json"):
     #2892
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     line=["","",False,"","","","","",0,"","","",0.0,0.0,"","","",0,"","",0]
-    f = open('POI_Trentino.json', encoding="utf8")
+    f = open(jsonFile, encoding="utf8")
     # returns JSON object as
     # a dictionary
     dataset=[]
@@ -289,40 +289,43 @@ def Read_JSON():
     f.close()
     return cf.createDatasetJson(dataset_JSON)
 
+#merge two datasets and return the one obtained, they must have the final schema
+#input: the two datasets to merge 
+#output: the dataset obtained
+def mergeDatasets(dataset1, dataset2):
+    schema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    #check that they have the correct schema
+    for elem in schema:
+        if elem not in dataset1 or elem not in dataset2:
+            print("Error: the schema is different\n")
+            return {}
+    for key in dataset1:
+        dataset1[key].extend(dataset2[key])
+    return dataset1
+    
 
-#populate data with the values from the csv dataset
-#just an example to test
-datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
-
-# #list of csv file names
-# print(cf.getListCSV())
-
-# for elem in cf.getListCSV():
-#     dataset = getCSV("CSV_POI/"+str(elem))
-
-#     dataset = createDataset(datasetList)
-
-#     dataset=modifySchema(dataset)
-
-#     # dataset = cleanDataset(dataset, cf.getInterestingCategories())
-
-#     dataset = castDataset(dataset)
-
-#     # cf.printDataset(dataset, True)
-
-# dataset = createDataset(datasetList)
-
-# dataset=modifySchema(dataset)
-
-dataset = Read_JSON()
+#reads all the datasets and merge them in a dictionary
+#input: relative path to json file (default: POI_Trentino.json), relative path to the CSV list (default: csv.txt), relative path to csv folder (default CSV_POI/)
+#output: the dictionary with the merged datasets with the final schema
+def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFolder="CSV_POI/"):
+    #open the JSON dataset, modify its schema and store it in the dictionary
+    dataset= Read_JSON(jsonDataset)
+    #read the CSVs, modify their schema and store them in the dictionary
+    csvList = cf.getListCSV(csvList)
+    for csv in csvList:
+        c = getCSV(csvFolder+str(csv))
+        c = createDataset(c)
+        c = modifySchema(c)
+        dataset = mergeDatasets(dataset, c)
+    return dataset
 
 
-        
-
-
-dataset = cleanDataset(dataset, cf.getInterestingCategories())
-
+#BEGIN SCRIPT SECTION
+dataset = mergeAllDatasets()
+dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 
-cf.printDataset(dataset, True)
+cf.printDataset(dataset)
 
+# for elem in dataset:
+#     print(str(elem)+" "+str(len(dataset[elem])))
