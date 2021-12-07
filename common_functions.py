@@ -70,3 +70,14 @@ def getInterestingCategories(interestingCategoriesFile='categories.txt'):
     except:
         pass
     return ret
+
+#convert a pandas dataframe into the dataset dictionary used in the script
+#input: pandas dataframe
+#output: dictionary containing the dataset
+def createDatasetJson(dataframe):
+    dataset = {}
+    for elem in dataframe.columns:
+        dataset[elem]=[]
+    for elem in dataframe.columns:
+        dataset[elem].extend([str(el) for el in dataframe[elem].values]) 
+    return dataset

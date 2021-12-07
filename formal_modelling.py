@@ -41,28 +41,17 @@ def createDataset(datasetList):
                 col+=1
     return dataset
 
-def createDatasetJson(dataframe):
-    dataset = {}
-    for elem in dataframe.columns:
-        dataset[elem]=[]
-    for elem in dataframe.columns:
-        dataset[elem].extend([str(el) for el in dataframe[elem].values])
-        
-    return dataset
-
 
 #modify the schema of the dataset according to the ETG
 #input: the dataset to modify
 #output: the dataset with the correct schema (objects are not modified here!)
 def modifySchema(oldDataset):
-    #TODO: descrizione and descrizione breve, what to do? For now saved both in ATT
     newSchema = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     # print(newSchema)
     dataset = {}
     for elem in newSchema:
         dataset[elem]=[]
     
-    #TODO:handle string scraping for description and address (oldDataset) and insert information in the right place of newDataset as the code above
     add = split_adress(oldDataset)
 
     #manually map the old schema to the new one
@@ -77,8 +66,6 @@ def modifySchema(oldDataset):
     dataset['ADD:PostalCode'].extend(add['ADD:PostalCode'])
     dataset['ADD:Province'].extend(add['ADD:Province'])
     dataset['ADD:StreetNumber'].extend(add['ADD:StreetNumber'])
-    #TODO: what to do with the 'Informazioni' column?
-    #TODO: what to do with the 'Leggi le informazioni dettagliate' column?
     if 'Impianto gestito da' in oldDataset: dataset['COM:Name'].extend(oldDataset['Impianto gestito da'])
     if 'Telefono' in oldDataset: dataset['COM:Telephone'].extend(oldDataset['Telefono'])
     #put in url the indirizzo web, if it doesn't have the value then put the informazioni dettagliate
@@ -122,8 +109,10 @@ def modifySchema(oldDataset):
     for elem in dataset:
         if(len(dataset[elem])==0): dataset[elem].extend(noValues)
     return dataset
+
 def has_numbers(inputString):
      return any(char.isdigit() for char in inputString)
+
 def split_adress(oldDataset):
     column_names=['ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     dataset_adress=[]
@@ -298,7 +287,7 @@ def Read_JSON():
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
     # dataset_JSON.to_csv(r'myData.csv',sep=';',index=True)
     f.close()
-    return dataset_JSON
+    return cf.createDatasetJson(dataset_JSON)
 
 
 #populate data with the values from the csv dataset
@@ -325,7 +314,7 @@ datasetList = getCSV("CSV_POI/Comun_general_de_Fascia.csv")
 
 # dataset=modifySchema(dataset)
 
-dataset = createDatasetJson(Read_JSON())
+dataset = Read_JSON()
 
 
         
