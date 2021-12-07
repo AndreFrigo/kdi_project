@@ -218,8 +218,7 @@ def castDataset(oldDataset):
         dataset[elem].extend(oldDataset[elem])
     
     for elem in booleanString:
-        #TODO
-        pass
+        dataset[elem].extend(cf.castBool(oldDataset[elem], False))
     
     return dataset
 

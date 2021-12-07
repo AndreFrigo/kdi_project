@@ -57,6 +57,21 @@ def castInt(listElem, default):
             ret.append(int(default))
     return ret
 
+#cast a list of strings into a list of booleans
+#input: the list of string elements to be cast, the default value for missing elements (blanks)
+def castBool(listElem, default=False):
+    ret = []
+    if (not default == True) or (not default == False):
+        default = False
+    for elem in listElem:
+        if(elem == "True" or elem == "true"):
+            ret.append(True)
+        elif(elem == "False" or elem == "frue"):
+            ret.append(False)
+        else:
+            ret.append(bool(default))
+    return ret
+
 #list of interesting categories for both csv and json files
 #input: txt file with the interesting categories
 #output: the list of interesting categories
