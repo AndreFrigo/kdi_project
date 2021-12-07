@@ -318,13 +318,42 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
         dataset = mergeDatasets(dataset, c)
     return dataset
 
+#remove the duplicates from a dataset with the final schema
+#input: the dataset to analyze
+#output: the dataset without duplicates
+def removeDuplicates(oldDataset):
+    #use the attraction name to find duplicates (61 attraction with the same name that are the same entities)
+    l = oldDataset["ATT:Name"]
+    s = set([x for x in l if l.count(x) > 1])
+    dataset = {}
+    for elem in oldDataset:
+        dataset[elem]=[]
+    duplicates={}
+    for elem in s:
+        duplicates[elem]=0
+    for i in range(0, len(oldDataset["ATT:Name"])):
+        #if that attraction is a duplicate add it only if it was not added before
+        name = oldDataset["ATT:Name"][i]
+        if(name in s):
+            if(duplicates[name]==0):
+                #add the element to the dataset
+                for elem in oldDataset:
+                    dataset[elem].append(oldDataset[elem][i])
+                #increase the counter of buplicates added
+                duplicates[name]+=1
+            #if it is already added do nothing
+        else:
+            for elem in oldDataset:
+                dataset[elem].append(oldDataset[elem][i])
+    return dataset
+
 
 #BEGIN SCRIPT SECTION
 dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
-
-cf.printDataset(dataset)
+dataset = removeDuplicates(dataset)
+cf.printDataset(dataset, True)
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
