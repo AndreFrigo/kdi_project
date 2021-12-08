@@ -324,12 +324,14 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
 def removeDuplicates(oldDataset):
     #use the attraction name to find duplicates (61 attraction with the same name that are the same entities)
     l = oldDataset["ATT:Name"]
-    lo =oldDataset["LOC:Longitude"]
-    la =oldDataset["LOC:Latitude"]
+    longandlat=[]
+    #first we create a table combining long and lattitude into one value but only for the coordinates who have more than 5 digit after the coma
+    for i in range(0,len(oldDataset["LOC:Longitude"])):
+        if(len(str(oldDataset["LOC:Longitude"][i]))>=9 and len(str(oldDataset["LOC:Latitude"][i]))>=9):
+            longandlat.append(str(oldDataset["LOC:Longitude"][i])+"&"+str(oldDataset["LOC:Latitude"][i]))
     s = set([x for x in l if l.count(x) > 1])
-    # only take the coordinates who have more than 5 digit after the coma
-    longs = set([x for x in lo if l.count(x) > 1 and len(str(x))>=9])
-    lats = set([x for x in la if l.count(x) > 1 and len(str(x))>=9])
+    
+    longs = set([x for x in longandlat if longandlat.count(x) > 1])
 
     dataset = {}
     for elem in oldDataset:
@@ -337,16 +339,22 @@ def removeDuplicates(oldDataset):
     duplicates={}
     for elem in s:
         duplicates[elem]=0
+    #create an other list of dict duplicates for long
+    duplicates_long={}
+    for elem in longs:
+        duplicates_long[elem]=0
     for i in range(0, len(oldDataset["ATT:Name"])):
         #if that attraction is a duplicate add it only if it was not added before
         name = oldDataset["ATT:Name"][i]
         long=oldDataset["LOC:Longitude"][i]
         lat=oldDataset["LOC:Latitude"][i]
         #check if there is no duplicate on the longitude lattitude
-        if(long in longs and lat in lats):
-            if(duplicates[name]==0):
+        
+        if(str(long)+"&"+str(lat) in longs):
+            if(duplicates_long[str(long)+"&"+str(lat)]==0):
                 for elem in oldDataset:
                     dataset[elem].append(oldDataset[elem][i])
+                duplicates_long[str(long)+"&"+str(lat)]+=1
         elif(name in s):
             if(duplicates[name]==0):
                 #add the element to the dataset
