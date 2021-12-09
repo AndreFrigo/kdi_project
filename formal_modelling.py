@@ -357,7 +357,7 @@ def remove_coordinate_duplicate(oldDataset):
     duplicate=[]
     list_index_id=[]
     for i in range(0, len(oldDataset)-1):
-        if(len(str(oldDataset["LOC:Latitude"][i]))>=9 and i not in list_index_id):
+        if(len(str(oldDataset["LOC:Latitude"][i]))>=9):
             for j in range(i+1,len(oldDataset)):
                 if(len(str(oldDataset["LOC:Latitude"][j]))>=9):
                     coordinate_1=(oldDataset["LOC:Latitude"][i],oldDataset['LOC:Longitude'][i])
