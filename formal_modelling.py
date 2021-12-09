@@ -2,6 +2,7 @@ import csv
 import common_functions as cf
 import pandas as pd
 import json
+import geopy.distance
 
 #read the csv files and modify the datasets according to the ETG
 #input: single csv file name including relative path(string)
@@ -324,14 +325,8 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
 def removeDuplicates(oldDataset):
     #use the attraction name to find duplicates (61 attraction with the same name that are the same entities)
     l = oldDataset["ATT:Name"]
-    longandlat=[]
-    #first we create a table combining long and lattitude into one value but only for the coordinates who have more than 5 digit after the coma
-    for i in range(0,len(oldDataset["LOC:Longitude"])):
-        if(len(str(oldDataset["LOC:Longitude"][i]))>=9 and len(str(oldDataset["LOC:Latitude"][i]))>=9):
-            longandlat.append(str(oldDataset["LOC:Longitude"][i])+"&"+str(oldDataset["LOC:Latitude"][i]))
     s = set([x for x in l if l.count(x) > 1])
-    
-    longs = set([x for x in longandlat if longandlat.count(x) > 1])
+    remove_coordinate_duplicate(oldDataset)
 
     dataset = {}
     for elem in oldDataset:
@@ -340,22 +335,11 @@ def removeDuplicates(oldDataset):
     for elem in s:
         duplicates[elem]=0
     #create an other list of dict duplicates for long
-    duplicates_long={}
-    for elem in longs:
-        duplicates_long[elem]=0
     for i in range(0, len(oldDataset["ATT:Name"])):
         #if that attraction is a duplicate add it only if it was not added before
         name = oldDataset["ATT:Name"][i]
-        long=oldDataset["LOC:Longitude"][i]
-        lat=oldDataset["LOC:Latitude"][i]
-        #check if there is no duplicate on the longitude lattitude
-        
-        if(str(long)+"&"+str(lat) in longs):
-            if(duplicates_long[str(long)+"&"+str(lat)]==0):
-                for elem in oldDataset:
-                    dataset[elem].append(oldDataset[elem][i])
-                duplicates_long[str(long)+"&"+str(lat)]+=1
-        elif(name in s):
+        #check if there is no duplicate on the longitude lattitude  
+        if(name in s):
             if(duplicates[name]==0):
                 #add the element to the dataset
                 for elem in oldDataset:
@@ -368,13 +352,38 @@ def removeDuplicates(oldDataset):
                 dataset[elem].append(oldDataset[elem][i])
     return dataset
 
+def remove_coordinate_duplicate(oldDataset):
+    #x=Lat y=Long
+    duplicate=[]
+    list_index_id=[]
+    for i in range(0, len(oldDataset)-1):
+        if(len(str(oldDataset["LOC:Latitude"][i]))>=9 and i not in list_index_id):
+            for j in range(i+1,len(oldDataset)):
+                if(len(str(oldDataset["LOC:Latitude"][j]))>=9):
+                    coordinate_1=(oldDataset["LOC:Latitude"][i],oldDataset['LOC:Longitude'][i])
+                    coordinate_2=(oldDataset["LOC:Latitude"][j],oldDataset['LOC:Longitude'][j])
+                    if(geopy.distance.distance(coordinate_1,coordinate_2).kilometers<1):
+                        print("-----"+str(i))
+                        print(geopy.distance.distance(coordinate_1,coordinate_2).kilometers)
+                        list_j=[]
+                        list_i=[]
+                        for elem in oldDataset:
+                            list_i.append(oldDataset[elem][i])
+                            list_j.append(oldDataset[elem][j])
+                        print(list_i)
+                        print(list_j)
+                        if(j not in list_index_id):
+                            duplicate.append(list_j)
+                            list_index_id.append(j)
+
+
 
 #BEGIN SCRIPT SECTION
 dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
-cf.printDataset(dataset, True)
+#cf.printDataset(dataset, True)
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
