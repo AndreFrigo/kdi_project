@@ -3,6 +3,7 @@ import common_functions as cf
 import pandas as pd
 import json
 import geopy.distance
+from math import floor, ceil
 
 #read the csv files and modify the datasets according to the ETG
 #input: single csv file name including relative path(string)
@@ -326,8 +327,8 @@ def removeDuplicates(oldDataset):
     #use the attraction name to find duplicates (61 attraction with the same name that are the same entities)
     l = oldDataset["ATT:Name"]
     s = set([x for x in l if l.count(x) > 1])
-    remove_coordinate_duplicate(oldDataset)
-
+    #remove_coordinate_duplicate(oldDataset)
+    remove_name_duplicate_jaro(oldDataset)
     dataset = {}
     for elem in oldDataset:
         dataset[elem]=[]
@@ -375,7 +376,90 @@ def remove_coordinate_duplicate(oldDataset):
                         if(j not in list_index_id):
                             duplicate.append(list_j)
                             list_index_id.append(j)
+def remove_name_duplicate_jaro(oldDataset):
+    #In total we found 41 duplicates 
+    count=0
+    #words that need to be delete to have a good similarity
+    #this one contains all the word that seems parasite
+    deletewords=['centro','sci',' di ','fondo','lago ','malga','cascata','percorso','il ','area','campitello','passo','panorama',' col ',' san ','pozza','trekking',' al ','rifugio','sasso','dolomiti','park','noleggio','ufficio','skipass',' bar ','ristorante','campeggio','camping','sport',' delle ','passeggiata','sentiero','dosso','itinerario','monte','scuola','italiana','palaghiaccio','comunale','castello','baita','piramidi',' del ']
+    #sometimes we can have this problem:"Trekking delle cave" and "Trekking del Vajolet" and it' doesn't delete del and delle
+    importantwords=[' delle ',' del ']
+    for i in range(0,len(oldDataset["ATT:Name"])):
+        for j in range(i+1,len(oldDataset["ATT:Name"])-1):
+            moti=oldDataset["ATT:Name"][i].lower()
+            motj=oldDataset["ATT:Name"][j].lower()
+            #delete parasite words
+            for word in deletewords:
+                #only delete the word if it's inside the 2 names so that we can make the difference when the word is a parasite and when it help to distinguish between 2 names
+                #ex :Centro sci di fondo Canazei and Dolomiti Park Canazei Belvedere if we don't add the if it will only keep canazei and will think it's similar
+                if (word in moti and word in motj or word in importantwords):
+                    moti=moti.replace(word,' ')
+                    motj=motj.replace(word,' ')
+            similarity=round(jaro_distance(moti,motj),6)
+            if(similarity>0.80):
+                count+=1
+                list_j=[]
+                list_i=[]
+                for elem in oldDataset:
+                    list_i.append(oldDataset[elem][i])
+                    list_j.append(oldDataset[elem][j])
+                print("------"+str(i))
+                print(similarity)
+                print(oldDataset["ATT:Name"][i]+" / "+str(moti))
+                print(oldDataset["ATT:Name"][j]+" / "+str(motj))
+    print(count)
 
+def jaro_distance(s1, s2): 
+    # If the s are equal
+    if (s1 == s2):
+        return 1.0
+    # Length of two s
+    len1 = len(s1)
+    len2 = len(s2)
+    # Maximum distance upto which matching
+    # is allowed
+    max_dist = floor(max(len1, len2) / 2) - 1
+    # Count of matches
+    match = 0
+    # Hash for matches
+    hash_s1 = [0] * len(s1)
+    hash_s2 = [0] * len(s2)
+    # Traverse through the first
+    for i in range(len1):
+        # Check if there is any matches
+        for j in range(max(0, i - max_dist),
+                       min(len2, i + max_dist + 1)):   
+            # If there is a match
+            if (s1[i] == s2[j] and hash_s2[j] == 0):
+                hash_s1[i] = 1
+                hash_s2[j] = 1
+                match += 1
+                break
+    # If there is no match
+    if (match == 0):
+        return 0.0
+    # Number of transpositions
+    t = 0
+    point = 0
+    # Count number of occurrences
+    # where two characters match but
+    # there is a third matched character
+    # in between the indices
+    for i in range(len1):
+        if (hash_s1[i]):
+ 
+            # Find the next matched character
+            # in second
+            while (hash_s2[point] == 0):
+                point += 1
+ 
+            if (s1[i] != s2[point]):
+                t += 1
+            point += 1
+    t = t//2
+    # Return the Jaro Similarity
+    return (match/ len1 + match / len2 +
+            (match - t) / match)/ 3.0
 
 
 #BEGIN SCRIPT SECTION
