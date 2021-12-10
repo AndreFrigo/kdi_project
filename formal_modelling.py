@@ -14,12 +14,12 @@ def getCSV(filename):
     commune=filename.split("/")[1]
     dataset = []
     try:
-        with open(filename) as csv_file:
+        with open(filename,encoding='utf8') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')  
             for row in csv_reader:
                 dataset.append(row)
     except:
-        pass
+        print(filename)
     return dataset
 
 #create a dictionary containing the original data
@@ -308,7 +308,7 @@ def mergeDatasets(dataset1, dataset2):
 #reads all the datasets and merge them in a dictionary
 #input: relative path to json file (default: POI_Trentino.json), relative path to the CSV list (default: csv.txt), relative path to csv folder (default CSV_POI/)
 #output: the dictionary with the merged datasets with the final schema
-def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFolder="CSV_POI/"):
+def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFolder="./CSV_POI/"):
     #open the JSON dataset, modify its schema and store it in the dictionary
     dataset= Read_JSON(jsonDataset)
     #read the CSVs, modify their schema and store them in the dictionary
@@ -467,6 +467,7 @@ dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
+print(len(dataset["ATT:Id"]))
 #cf.printDataset(dataset, True)
 
 # for elem in dataset:
