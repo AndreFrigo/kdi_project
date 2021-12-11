@@ -326,10 +326,8 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
 def removeDuplicates(oldDataset):
     #remove elements with exactly the same name
     dataset = removeNameDuplicates(oldDataset)
-    dataset2,teste = remove_name_duplicate_jaro(dataset)
-    print("-------------------------------------------")
-    dataset,teste2 = remove_name_duplicate_jaro(dataset2)
-    print("teste "+str(teste2))
+    #remove duplicates based on jaro similarity
+    dataset = remove_name_duplicate_jaro(dataset)
     return dataset
 
 #remove the elements with the exact same name
@@ -384,14 +382,12 @@ def remove_coordinate_duplicate(oldDataset):
                             list_index_id.append(j)
 
 def remove_name_duplicate_jaro(oldDataset):
-    #TODO: return the dataset with the necessary removal
+    #TODO: find out if it really deletes only duplicates
     #In total we found 26 duplicates (after the removeNameDuplicates function)
-    teste=False
     count=0
     true_dataset = {}
     for elem in oldDataset:
         true_dataset[elem]=[]
-    no_duplicates=[]
     list_names_dataset=[]
     #words that need to be delete to have a good similarity
     #this one contains all the word that seems parasite
@@ -402,8 +398,8 @@ def remove_name_duplicate_jaro(oldDataset):
         'torrente', 'giro', 'palestra', 'artificiale', 'naturale', 'panorama']
     #sometimes we can have this problem:"Trekking delle cave" and "Trekking del Vajolet" and it' doesn't delete del and delle
     importantwords=[' delle ',' del ']
-    for i in range(0,len(oldDataset["ATT:Name"])):
-        for j in range(i+1,len(oldDataset["ATT:Name"])-1):
+    for i in range(0,len(oldDataset["ATT:Name"])-1):
+        for j in range(i+1,len(oldDataset["ATT:Name"])):
             moti=oldDataset["ATT:Name"][i].lower()
             motj=oldDataset["ATT:Name"][j].lower()
             #delete parasite words
@@ -419,30 +415,35 @@ def remove_name_duplicate_jaro(oldDataset):
             if('venegiota' in moti or 'venegiota' in motj): similarity=0
             if('bondo' in moti or 'bondo' in motj): similarity=0
             if(similarity>0.90):
-                teste=True
-                list_j=[]
-                list_i=[]
+                #it means that the two elements "are the same"
+                # list_j=[]
+                # list_i=[]
+                # list_i.append(oldDataset["ATT:Id"][i]+", "+oldDataset["ATT:Name"][i])
+                # list_j.append(oldDataset["ATT:Id"][j]+", "+oldDataset["ATT:Name"][j])
                 count+=1
-                list_i.append(oldDataset["ATT:Id"][i]+", "+oldDataset["ATT:Name"][i])
-                list_j.append(oldDataset["ATT:Id"][j]+", "+oldDataset["ATT:Name"][j])
-                print(oldDataset["ATT:Name"][i] not in list_names_dataset)
+                # print(oldDataset["ATT:Name"][i] not in list_names_dataset)
+                #TODO: decide what to add between the I element and the J one
                 if(oldDataset["ATT:Name"][i] not in list_names_dataset):
-                    print("done")
-                    print(oldDataset["ATT:Name"][i])
-                    print(list_names_dataset)
+                    # print("done")
+                    # print(oldDataset["ATT:Name"][i])
+                    # print(list_names_dataset)
                     for elem in oldDataset:
                         true_dataset[elem].append(oldDataset[elem][i])
                     list_names_dataset.append(oldDataset["ATT:Name"][i])
                     list_names_dataset.append(oldDataset["ATT:Name"][j])
                     #if some element which are detected as similarity were add inside the Dataset they must be deleted
-                if( oldDataset["ATT:Name"][j] in list_names_dataset):
-                    if(oldDataset["ATT:Name"][j] in true_dataset["ATT:Name"]):
+                #we can use name since there are no duplicates 
+                name = oldDataset["ATT:Name"][j]
+                if(name in list_names_dataset):
+                    if(name in true_dataset["ATT:Name"]):
+                        #index of the element to remove from the true dataset
+                        index = true_dataset["ATT:Name"].index(name)
                         for elem in oldDataset:
-                            true_dataset[elem].remove(oldDataset[elem][j])
-                print("------"+str(i))
-                print(similarity)
-                print(oldDataset["ATT:Name"][i]+" / "+str(moti))
-                print(oldDataset["ATT:Name"][j]+" / "+str(motj))
+                            del true_dataset[elem][index]
+                # print("------"+str(i))
+                # print(similarity)
+                # print(oldDataset["ATT:Name"][i]+" / "+str(moti))
+                # print(oldDataset["ATT:Name"][j]+" / "+str(motj))
             else:
                 if(oldDataset["ATT:Name"][i] not in list_names_dataset):
                     for elem in oldDataset:
@@ -452,12 +453,12 @@ def remove_name_duplicate_jaro(oldDataset):
                     for elem in oldDataset:
                         true_dataset[elem].append(oldDataset[elem][j])
                     list_names_dataset.append(oldDataset["ATT:Name"][j]) 
-    print(count)
+    # print(count)
     # for i in range(0, len(list_i)):
     #     print("-----------------------")
     #     print(list_i[i])
     #     print(list_j[i])
-    return true_dataset,teste
+    return true_dataset
 
 def jaro_distance(s1, s2): 
     # If the s are equal
@@ -510,7 +511,8 @@ def jaro_distance(s1, s2):
     # Return the Jaro Similarity
     return (match/ len1 + match / len2 +
             (match - t) / match)/ 3.0
-def save_CSV(datasets):
+
+def save_CSV(dataset):
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
     dataset_JSON.to_csv(r'trentino_territory.csv',sep=';',index=False, encoding='utf-8-sig')
@@ -520,8 +522,8 @@ dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
-save_CSV(dataset)
-#cf.printDataset(dataset, True)
+# cf.printDataset(dataset, False)
+# save_CSV(dataset)
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
