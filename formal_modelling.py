@@ -510,13 +510,17 @@ def jaro_distance(s1, s2):
     # Return the Jaro Similarity
     return (match/ len1 + match / len2 +
             (match - t) / match)/ 3.0
-
+def save_CSV(datasets):
+    column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    dataset_JSON=pd.DataFrame(dataset,columns=column_names)
+    dataset_JSON.to_csv(r'trentino_territory.csv',sep=';',index=False, encoding='utf-8-sig')
 
 #BEGIN SCRIPT SECTION
 dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
+save_CSV(dataset)
 #cf.printDataset(dataset, True)
 
 # for elem in dataset:
