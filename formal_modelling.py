@@ -436,8 +436,8 @@ def remove_name_duplicate_jaro(oldDataset):
                     list_names_dataset.append(oldDataset["ATT:Name"][j])
                     #if some element which are detected as similarity were add inside the Dataset they must be deleted
                 if( oldDataset["ATT:Name"][j] in list_names_dataset):
-                    for elem in oldDataset:
-                        if(oldDataset[elem][j] in true_dataset[elem]):
+                    if(oldDataset["ATT:Name"][j] in true_dataset["ATT:Name"]):
+                        for elem in oldDataset:
                             true_dataset[elem].remove(oldDataset[elem][j])
                 print("------"+str(i))
                 print(similarity)
