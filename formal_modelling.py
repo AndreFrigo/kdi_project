@@ -326,7 +326,10 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
 def removeDuplicates(oldDataset):
     #remove elements with exactly the same name
     dataset = removeNameDuplicates(oldDataset)
-    dataset = remove_name_duplicate_jaro(dataset)
+    dataset2,teste = remove_name_duplicate_jaro(dataset)
+    print("-------------------------------------------")
+    dataset,teste2 = remove_name_duplicate_jaro(dataset2)
+    print("teste "+str(teste2))
     return dataset
 
 #remove the elements with the exact same name
@@ -383,9 +386,13 @@ def remove_coordinate_duplicate(oldDataset):
 def remove_name_duplicate_jaro(oldDataset):
     #TODO: return the dataset with the necessary removal
     #In total we found 26 duplicates (after the removeNameDuplicates function)
+    teste=False
     count=0
-    list_j=[]
-    list_i=[]
+    true_dataset = {}
+    for elem in oldDataset:
+        true_dataset[elem]=[]
+    no_duplicates=[]
+    list_names_dataset=[]
     #words that need to be delete to have a good similarity
     #this one contains all the word that seems parasite
     deletewords=['centro','sci',' di ','fondo','lago ','malga','cascata','percorso','il ','area','campitello','passo',
@@ -412,18 +419,45 @@ def remove_name_duplicate_jaro(oldDataset):
             if('venegiota' in moti or 'venegiota' in motj): similarity=0
             if('bondo' in moti or 'bondo' in motj): similarity=0
             if(similarity>0.90):
+                teste=True
+                list_j=[]
+                list_i=[]
                 count+=1
                 list_i.append(oldDataset["ATT:Id"][i]+", "+oldDataset["ATT:Name"][i])
                 list_j.append(oldDataset["ATT:Id"][j]+", "+oldDataset["ATT:Name"][j])
-                # print("------"+str(i))
-                # print(similarity)
-                # print(oldDataset["ATT:Name"][i]+" / "+str(moti))
-                # print(oldDataset["ATT:Name"][j]+" / "+str(motj))
+                print(oldDataset["ATT:Name"][i] not in list_names_dataset)
+                if(oldDataset["ATT:Name"][i] not in list_names_dataset):
+                    print("done")
+                    print(oldDataset["ATT:Name"][i])
+                    print(list_names_dataset)
+                    for elem in oldDataset:
+                        true_dataset[elem].append(oldDataset[elem][i])
+                    list_names_dataset.append(oldDataset["ATT:Name"][i])
+                    list_names_dataset.append(oldDataset["ATT:Name"][j])
+                    #if some element which are detected as similarity were add inside the Dataset they must be deleted
+                if(oldDataset["ATT:Name"][i] in list_names_dataset or oldDataset["ATT:Name"][j] in list_names_dataset):
+                    for elem in oldDataset:
+                        true_dataset[elem].remove(oldDataset[elem][i])
+                        true_dataset[elem].remove(oldDataset[elem][j])
+                print("------"+str(i))
+                print(similarity)
+                print(oldDataset["ATT:Name"][i]+" / "+str(moti))
+                print(oldDataset["ATT:Name"][j]+" / "+str(motj))
+            else:
+                if(oldDataset["ATT:Name"][i] not in list_names_dataset):
+                    for elem in oldDataset:
+                        true_dataset[elem].append(oldDataset[elem][i])
+                    list_names_dataset.append(oldDataset["ATT:Name"][i])
+                if(oldDataset["ATT:Name"][j] not in list_names_dataset):
+                    for elem in oldDataset:
+                        true_dataset[elem].append(oldDataset[elem][j])
+                    list_names_dataset.append(oldDataset["ATT:Name"][j]) 
     print(count)
-    for i in range(0, len(list_i)):
-        print("-----------------------")
-        print(list_i[i])
-        print(list_j[i])
+    # for i in range(0, len(list_i)):
+    #     print("-----------------------")
+    #     print(list_i[i])
+    #     print(list_j[i])
+    return true_dataset,teste
 
 def jaro_distance(s1, s2): 
     # If the s are equal
