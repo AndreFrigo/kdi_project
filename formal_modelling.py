@@ -324,22 +324,25 @@ def mergeAllDatasets(jsonDataset="POI_Trentino.json", csvList="csv.txt", csvFold
 #input: the dataset to analyze
 #output: the dataset without duplicates
 def removeDuplicates(oldDataset):
+    #remove elements with exactly the same name
+    dataset = removeNameDuplicates(oldDataset)
+    dataset = remove_name_duplicate_jaro(dataset)
+    return dataset
+
+#remove the elements with the exact same name
+def removeNameDuplicates(oldDataset):
     #use the attraction name to find duplicates (61 attraction with the same name that are the same entities)
     l = oldDataset["ATT:Name"]
     s = set([x for x in l if l.count(x) > 1])
-    #remove_coordinate_duplicate(oldDataset)
-    remove_name_duplicate_jaro(oldDataset)
     dataset = {}
     for elem in oldDataset:
         dataset[elem]=[]
     duplicates={}
     for elem in s:
         duplicates[elem]=0
-    #create an other list of dict duplicates for long
     for i in range(0, len(oldDataset["ATT:Name"])):
         #if that attraction is a duplicate add it only if it was not added before
         name = oldDataset["ATT:Name"][i]
-        #check if there is no duplicate on the longitude lattitude  
         if(name in s):
             if(duplicates[name]==0):
                 #add the element to the dataset
@@ -376,12 +379,20 @@ def remove_coordinate_duplicate(oldDataset):
                         if(j not in list_index_id):
                             duplicate.append(list_j)
                             list_index_id.append(j)
+
 def remove_name_duplicate_jaro(oldDataset):
-    #In total we found 41 duplicates 
+    #TODO: return the dataset with the necessary removal
+    #In total we found 26 duplicates (after the removeNameDuplicates function)
     count=0
+    list_j=[]
+    list_i=[]
     #words that need to be delete to have a good similarity
     #this one contains all the word that seems parasite
-    deletewords=['centro','sci',' di ','fondo','lago ','malga','cascata','percorso','il ','area','campitello','passo','panorama',' col ',' san ','pozza','trekking',' al ','rifugio','sasso','dolomiti','park','noleggio','ufficio','skipass',' bar ','ristorante','campeggio','camping','sport',' delle ','passeggiata','sentiero','dosso','itinerario','monte','scuola','italiana','palaghiaccio','comunale','castello','baita','piramidi',' del ']
+    deletewords=['centro','sci',' di ','fondo','lago ','malga','cascata','percorso','il ','area','campitello','passo',
+        'panorama',' col ',' san ','pozza','trekking',' al ','rifugio','sasso','dolomiti','park','noleggio','ufficio','skipass',
+        ' bar ','ristorante','campeggio','camping','sport',' delle ','passeggiata','sentiero','dosso','itinerario','monte','scuola',
+        'italiana','palaghiaccio','comunale','castello','baita','piramidi', 'monte', 'itinerario', 'malga', 'canyoning', 
+        'torrente', 'giro', 'palestra', 'artificiale', 'naturale', 'panorama']
     #sometimes we can have this problem:"Trekking delle cave" and "Trekking del Vajolet" and it' doesn't delete del and delle
     importantwords=[' delle ',' del ']
     for i in range(0,len(oldDataset["ATT:Name"])):
@@ -396,18 +407,23 @@ def remove_name_duplicate_jaro(oldDataset):
                     moti=moti.replace(word,' ')
                     motj=motj.replace(word,' ')
             similarity=round(jaro_distance(moti,motj),6)
-            if(similarity>0.80):
+            # exceptions
+            if('corno' in moti or 'corno' in motj): similarity=0
+            if('venegiota' in moti or 'venegiota' in motj): similarity=0
+            if('bondo' in moti or 'bondo' in motj): similarity=0
+            if(similarity>0.90):
                 count+=1
-                list_j=[]
-                list_i=[]
-                for elem in oldDataset:
-                    list_i.append(oldDataset[elem][i])
-                    list_j.append(oldDataset[elem][j])
-                print("------"+str(i))
-                print(similarity)
-                print(oldDataset["ATT:Name"][i]+" / "+str(moti))
-                print(oldDataset["ATT:Name"][j]+" / "+str(motj))
+                list_i.append(oldDataset["ATT:Id"][i]+", "+oldDataset["ATT:Name"][i])
+                list_j.append(oldDataset["ATT:Id"][j]+", "+oldDataset["ATT:Name"][j])
+                # print("------"+str(i))
+                # print(similarity)
+                # print(oldDataset["ATT:Name"][i]+" / "+str(moti))
+                # print(oldDataset["ATT:Name"][j]+" / "+str(motj))
     print(count)
+    for i in range(0, len(list_i)):
+        print("-----------------------")
+        print(list_i[i])
+        print(list_j[i])
 
 def jaro_distance(s1, s2): 
     # If the s are equal
@@ -467,7 +483,6 @@ dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
-print(len(dataset["ATT:Id"]))
 #cf.printDataset(dataset, True)
 
 # for elem in dataset:
