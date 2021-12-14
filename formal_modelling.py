@@ -219,6 +219,7 @@ def castDataset(oldDataset):
         dataset[elem].extend(cf.castInt(oldDataset[elem], -1))
     
     for elem in stringList:
+        #TODO: handle strange strings that represent "", like "None"
         dataset[elem].extend(oldDataset[elem])
     
     for elem in booleanString:
@@ -618,6 +619,58 @@ def jaro_distance(s1, s2):
     return (match/ len1 + match / len2 +
             (match - t) / match)/ 3.0
 
+#assign IDs to each entity
+#input: the dataset already with the final schema, cleaned, casted and without attraction duplicates
+#output: the dataset with correct ids assigned to it
+def assignId(dataset):
+    ids = ["ATT:Id", "COM:Id", "LOC:Id", "ADD:Id"]
+    length = len(dataset[ids[0]])
+    
+    #Location
+    cont = 0
+    #keys pairs of loc and lon, values the ids assigned
+    locations = {}
+    for i in range(0, length):
+        lat = str(dataset["LOC:Latitude"][i])
+        lon = str(dataset["LOC:Longitude"][i])
+        if (lat,lon) not in locations:
+            locations[(lat,lon)] = cont
+            cont +=1
+        # else:
+            # print("Couple "+str((lat,lon)) + "already exists, id: "+str(locations[(lat,lon)]))
+        dataset["LOC:Id"][i] = str(locations[(lat,lon)])
+    
+    #Address
+    cont = 0
+    address = {}
+    for i in range (0, length):
+        a = (str(dataset['ADD:City'][i]), str(dataset['ADD:Commune'][i]), str(dataset['ADD:PostalCode'][i]), str(dataset['ADD:Province'][i]), str(dataset['ADD:Street'][i]), str(dataset['ADD:StreetNumber'][i]))
+        if a not in address:
+            address[a] = cont
+            cont +=1
+        # else:
+        #     print("Couple "+str(a) + "already exists, id: "+str(address[a]))
+        dataset["ADD:Id"][i] = str(address[a])
+    
+    #Attraction
+    cont = 0
+    for i in range(0, length):
+        dataset["ATT:Id"][i] = str(cont)
+        cont +=1
+    
+    #Company
+    cont = 0
+    companies = {}
+    for i in range(0, length):
+        com = (str(dataset['COM:Name'][i]), str(dataset['COM:OpeningHours'][i]), str(dataset['COM:Price'][i]), str(dataset['COM:Telephone'][i]), str(dataset['COM:Url'][i]))
+        if com not in companies:
+            companies[com] = cont
+            cont += 1
+        # else:
+        #     print("Couple "+str(com) + "already exists, id: "+str(companies[com]))
+        dataset["ADD:Id"][i] = str(companies[com])
+    return dataset
+
 def save_CSV(dataset):
     
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
@@ -642,8 +695,10 @@ dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
-# cf.printDataset(dataset, False)
+dataset = assignId(dataset)
+cf.printDataset(dataset, False)
 # save_CSV(dataset)
+
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
