@@ -122,7 +122,7 @@ def split_adress(oldDataset):
     if 'address' in oldDataset:         
         #for each ligne split it 
         for address in oldDataset["address"]:
-            list_adress=["","","0","","","0"]
+            list_adress=["","","","","",""]
             if(address!=""):
                
                 #print("----------------")
@@ -641,7 +641,7 @@ dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
 # cf.printDataset(dataset, False)
-save_CSV(dataset)
+# save_CSV(dataset)
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
