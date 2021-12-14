@@ -12,6 +12,8 @@ commune=""
 def getCSV(filename):
     global commune
     commune=filename.split("/")[2]
+    if("_1" in commune):
+        commune=commune.replace('_1','')
     dataset = []
     try:
         with open(filename,encoding='utf8') as csv_file:
