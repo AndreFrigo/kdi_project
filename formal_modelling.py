@@ -1,4 +1,5 @@
 import csv
+from os import add_dll_directory
 import common_functions as cf
 import pandas as pd
 import json
@@ -11,7 +12,7 @@ from math import floor, ceil
 commune=""
 def getCSV(filename):
     global commune
-    commune=filename.split("/")[1]
+    commune=filename.split("/")[2]
     dataset = []
     try:
         with open(filename,encoding='utf8') as csv_file:
@@ -617,9 +618,21 @@ def jaro_distance(s1, s2):
             (match - t) / match)/ 3.0
 
 def save_CSV(dataset):
+    
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
-    dataset_JSON.to_csv(r'trentino_territory.csv',sep=';',index=False, encoding='utf-8-sig')
+    #location
+    dataset_location=dataset_JSON[['LOC:Id','LOC:Latitude','LOC:Longitude']]
+    dataset_location.to_csv(r'location.csv',sep=';',index=False, encoding='utf-8-sig')
+    #addresse    
+    dataset_addresse=dataset_JSON[['ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']]
+    dataset_addresse.to_csv(r'addresse.csv',sep=';',index=False, encoding='utf-8-sig')
+    #company
+    dataset_company=dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url']]
+    dataset_company.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')
+    #attraction
+    dataset_attraction=dataset_JSON[['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','LOC:Id','ADD:Id']]
+    dataset_attraction.to_csv(r'attraction.csv',sep=';',index=False, encoding='utf-8-sig')
 
 #BEGIN SCRIPT SECTION
 dataset = mergeAllDatasets()
@@ -627,7 +640,7 @@ dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
 # cf.printDataset(dataset, False)
-# save_CSV(dataset)
+save_CSV(dataset)
 
 # for elem in dataset:
 #     print(str(elem)+" "+str(len(dataset[elem])))
