@@ -622,9 +622,7 @@ def jaro_distance(s1, s2):
 #input: the dataset already with the final schema, cleaned, casted and without attraction duplicates
 #output: the dataset with correct ids assigned to it
 def assignId(dataset):
-    ids = ["ATT:Id", "COM:Id", "LOC:Id", "ADD:Id"]
-    length = len(dataset[ids[0]])
-    
+    length = len(dataset["ATT:Id"])
     #Location
     cont = 0
     #keys pairs of loc and lon, values the ids assigned
@@ -667,7 +665,8 @@ def assignId(dataset):
             cont += 1
         # else:
         #     print("Couple "+str(com) + "already exists, id: "+str(companies[com]))
-        dataset["ADD:Id"][i] = str(companies[com])
+        dataset["COM:Id"][i] = str(companies[com])
+    
     return dataset
 
 def save_CSV(dataset):
