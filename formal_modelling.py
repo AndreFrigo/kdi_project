@@ -627,12 +627,14 @@ def save_CSV(dataset):
     #addresse    
     dataset_addresse=dataset_JSON[['ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']]
     dataset_addresse.to_csv(r'addresse.csv',sep=';',index=False, encoding='utf-8-sig')
-    #company
-    dataset_company=dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url']]
-    dataset_company.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')
     #attraction
     dataset_attraction=dataset_JSON[['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','LOC:Id','ADD:Id']]
     dataset_attraction.to_csv(r'attraction.csv',sep=';',index=False, encoding='utf-8-sig')
+    #company
+    dataset_JSON['LOC:Id']=len(dataset['ATT:Id'])*['']
+    dataset_JSON['ADD:Id']=len(dataset['ATT:Id'])*['']
+    dataset_company=dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','ADD:Id']]
+    dataset_company.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')
 
 #BEGIN SCRIPT SECTION
 dataset = mergeAllDatasets()
