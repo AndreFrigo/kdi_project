@@ -675,11 +675,14 @@ def save_CSV(dataset):
     
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
+    #dataset_JSON.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')
     #location
-    dataset_location=dataset_JSON[['LOC:Id','LOC:Latitude','LOC:Longitude']]
+    dataset_location=pd.DataFrame(dataset_JSON[['LOC:Id','LOC:Latitude','LOC:Longitude']])
+    dataset_location.drop_duplicates(subset="LOC:Id",keep=False,inplace=True)
     dataset_location.to_csv(r'location.csv',sep=';',index=False, encoding='utf-8-sig')
     #addresse    
-    dataset_addresse=dataset_JSON[['ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']]
+    dataset_addresse=pd.DataFrame(dataset_JSON[['ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']])
+    dataset_addresse.drop_duplicates(subset="ADD:Id",keep=False,inplace=True)
     dataset_addresse.to_csv(r'addresse.csv',sep=';',index=False, encoding='utf-8-sig')
     #attraction
     dataset_attraction=dataset_JSON[['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','LOC:Id','ADD:Id']]
@@ -687,7 +690,8 @@ def save_CSV(dataset):
     #company
     dataset_JSON['LOC:Id']=len(dataset['ATT:Id'])*['']
     dataset_JSON['ADD:Id']=len(dataset['ATT:Id'])*['']
-    dataset_company=dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','ADD:Id']]
+    dataset_company=pd.DataFrame(dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','ADD:Id']])
+    dataset_company.drop_duplicates(subset="COM:Id",keep=False,inplace=True)
     dataset_company.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')
 
 #BEGIN SCRIPT SECTION
@@ -696,8 +700,8 @@ dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
 dataset = assignId(dataset)
-cf.printDataset(dataset, False)
-# save_CSV(dataset)
+#cf.printDataset(dataset, False)
+#save_CSV(dataset)
 
 
 # for elem in dataset:
