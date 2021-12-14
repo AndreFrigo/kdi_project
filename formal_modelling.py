@@ -227,7 +227,7 @@ def castDataset(oldDataset):
 def Read_JSON(jsonFile="POI_Trentino.json"):
     #2892
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
-    line=["","",False,"","","","","",0,"","","",0.0,0.0,"","","",0,"","",0]
+    line=["","","","","","","","","","","","","","","","","","","","",""]
     f = open(jsonFile, encoding="utf8")
     # returns JSON object as
     # a dictionary
@@ -235,23 +235,23 @@ def Read_JSON(jsonFile="POI_Trentino.json"):
     dataset_JSON=pd.DataFrame(columns=column_names)
     data = json.load(f)
     for i in range(2893):
-        line=["","",False,"","","","","",0,"","","",0.0,0.0,"","","",0,"","",""]
-        line[1]=data[str(i)]["content"]["objData"]["name"]["IT"]
-        line[3]=data[str(i)]["content"]["objData"]["description"]["IT"]
+        line=["","","","","","","","","","","","","","","","","","","","",""]
+        line[1]=str(data[str(i)]["content"]["objData"]["name"]["IT"])
+        line[3]=str(data[str(i)]["content"]["objData"]["description"]["IT"])
         #+"\n"+data[str(i)]["content"]["objData"]["serviceDescription"]
-        line[4]=data[str(i)]["content"]["objData"]["category"]
+        line[4]=str(data[str(i)]["content"]["objData"]["category"])
         if(data[str(i)]["content"]["poiData"]["contact"]!=None and data[str(i)]["content"]["poiData"]["contact"]["name"]!={} ):
-            line[6]=data[str(i)]["content"]["poiData"]["contact"]["name"]["IT"]
+            line[6]=str(data[str(i)]["content"]["poiData"]["contact"]["name"]["IT"])
         if(data[str(i)]["content"]["poiData"]["timetable"] != {}):
-            line[7]=data[str(i)]["content"]["poiData"]["timetable"]
+            line[7]=str(data[str(i)]["content"]["poiData"]["timetable"])
         if(data[str(i)]["content"]["poiData"]["contact"]!=None):
             if(data[str(i)]["content"]["poiData"]["contact"]["phone"]!= None):
                 line[9]=str(data[str(i)]["content"]["poiData"]["contact"]["phone"])
-            line[10]=data[str(i)]["content"]["poiData"]["contact"]["url"]
-        line[12]=data[str(i)]["content"]["poiData"]["location"]["coordinate"]["latitude"]
-        line[13]=data[str(i)]["content"]["poiData"]["location"]["coordinate"]["longitude"]
-        line[15]=data[str(i)]["content"]["poiData"]["location"]["addresses"]["IT"]["city"]
-        line[17]=data[str(i)]["content"]["poiData"]["location"]["addresses"]["IT"]["postalCode"]
+            line[10]=str(data[str(i)]["content"]["poiData"]["contact"]["url"])
+        line[12]=str(data[str(i)]["content"]["poiData"]["location"]["coordinate"]["latitude"])
+        line[13]=str(data[str(i)]["content"]["poiData"]["location"]["coordinate"]["longitude"])
+        line[15]=str(data[str(i)]["content"]["poiData"]["location"]["addresses"]["IT"]["city"])
+        line[17]=str(data[str(i)]["content"]["poiData"]["location"]["addresses"]["IT"]["postalCode"])
         street=data[str(i)]["content"]["poiData"]["location"]["addresses"]["IT"]["street"]
         if(has_numbers(street)):
             element2=street.split(" ")
@@ -281,9 +281,9 @@ def Read_JSON(jsonFile="POI_Trentino.json"):
                         c=1
                     else:
                         phrase+=elem+"."
-            line[19]=phrase       
+            line[19]=str(phrase)       
         else:
-            line[19]=street
+            line[19]=str(street)
         dataset.append(line)
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
     # dataset_JSON.to_csv(r'myData.csv',sep=';',index=True)
@@ -380,11 +380,95 @@ def remove_coordinate_duplicate(oldDataset):
                         if(j not in list_index_id):
                             duplicate.append(list_j)
                             list_index_id.append(j)
+#solve entity duplicates
+#input dictionary with the two entities (with final schema)
+#output: dictionary with the entity that will be stored 
+def solveConflict(conflicts):
+    # print("SOLVE CONFLICT BETWEEN "+conflicts["ATT:Name"][0] + " and " + conflicts["ATT:Name"][1])
+    
+    ret = {}
+    for elem in conflicts:
+        ret[elem]=[]
+    
+    #decide what to do for each attribute
+
+    #for the different ids I don't care, keep the first
+    first = ['ATT:Id', 'COM:Id', 'LOC:Id', 'ADD:Id']
+    for elem in first:
+        ret[elem].append(conflicts[elem][0])
+    
+    #for name it's not a problem, just discard if it is like 'csvimput_'
+    if('csvimport' in conflicts["ATT:Name"][0]):
+        ret["ATT:Name"].append(conflicts["ATT:Name"][1])
+    else:
+        ret["ATT:Name"].append(conflicts["ATT:Name"][0])
+    
+    #for parking area (bool) keep true if at least one of them is true
+    ret["ATT:ParkingArea"].append(conflicts["ATT:ParkingArea"][0] or conflicts["ATT:ParkingArea"][1])
+    
+    #for description keep the longer
+    if(len(conflicts["ATT:Description"][0]) >= len(conflicts["ATT:Description"][1])):
+        ret["ATT:Description"].append(conflicts["ATT:Description"][0])
+    else:
+        ret["ATT:Description"].append(conflicts["ATT:Description"][1])
+    
+    #keep the value of the first element if they exists
+    firstIfExist=['ATT:Type', 'COM:Name', 'COM:OpeningHours', 'COM:Url']
+    for elem in firstIfExist:
+        if(conflicts[elem][0] != ""):
+            ret[elem].append(conflicts[elem][0])
+        else:
+            ret[elem].append(conflicts[elem][1])
+    if(conflicts["COM:Price"][0] != -1):
+        ret["COM:Price"].append(conflicts["COM:Price"][0])
+    else:
+        ret["COM:Price"].append(conflicts["COM:Price"][1])
+    
+    #for telephone keep both if they are not the same 
+    #TODO: maybe do a function to compare exactly the telephone number?
+    if(conflicts["COM:Telephone"][0] != conflicts["COM:Telephone"][1]):
+        if(conflicts["COM:Telephone"][0] != "" and conflicts["COM:Telephone"][1] != ""):
+            ret["COM:Telephone"].append(str(conflicts["COM:Telephone"][0]) + ", " + str(conflicts["COM:Telephone"][1]))
+        elif(conflicts["COM:Telephone"][0] != ""):
+            ret["COM:Telephone"].append(str(conflicts["COM:Telephone"][0]))
+        elif(conflicts["COM:Telephone"][1] != ""):
+            ret["COM:Telephone"].append(str(conflicts["COM:Telephone"][1]))
+    else:
+        ret["COM:Telephone"].append(str(conflicts["COM:Telephone"][0]))
+    
+    #for latitude and longitude I keep the one with more digits choosing them in block
+    if(len(str(conflicts["LOC:Latitude"][0])) >= len(str(conflicts["LOC:Latitude"][1]))):
+        ret["LOC:Latitude"].append(conflicts["LOC:Latitude"][0])
+        ret["LOC:Longitude"].append(conflicts["LOC:Longitude"][0])
+    else:
+        ret["LOC:Latitude"].append(conflicts["LOC:Latitude"][1])
+        ret["LOC:Longitude"].append(conflicts["LOC:Longitude"][1])
+    
+    #for the address elements i choose them in block as before choosing the one with more filled elements
+    address = ['ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
+    cont0 = 0
+    cont1 = 0
+    for elem in address:
+        if(str(conflicts[elem][0]) != "-1" and str(conflicts[elem][0]) != ""):
+            cont0 += 1
+        if(str(conflicts[elem][1]) != "-1" and str(conflicts[elem][1]) != ""):
+            cont1 += 1
+    if(cont0 >= cont1):
+        for elem in address:
+            ret[elem].append(conflicts[elem][0])
+    else:
+        for elem in address:
+            ret[elem].append(conflicts[elem][1])
+
+    return ret
+        
 
 def remove_name_duplicate_jaro(oldDataset):
     #TODO: find out if it really deletes only duplicates
     #In total we found 26 duplicates (after the removeNameDuplicates function)
     count=0
+    list_j=[]
+    list_i=[]
     true_dataset = {}
     for elem in oldDataset:
         true_dataset[elem]=[]
@@ -416,13 +500,15 @@ def remove_name_duplicate_jaro(oldDataset):
             if('bondo' in moti or 'bondo' in motj): similarity=0
             if(similarity>0.90):
                 #it means that the two elements "are the same"
-                # list_j=[]
-                # list_i=[]
-                # list_i.append(oldDataset["ATT:Id"][i]+", "+oldDataset["ATT:Name"][i])
-                # list_j.append(oldDataset["ATT:Id"][j]+", "+oldDataset["ATT:Name"][j])
+                stri=''
+                strj=''
+                for e in oldDataset:
+                    stri += str(e) + ": "+str(oldDataset[e][i])+", "
+                    strj += str(e) + ": "+str(oldDataset[e][j])+", "
+                list_i.append(stri)
+                list_j.append(strj)
                 count+=1
                 # print(oldDataset["ATT:Name"][i] not in list_names_dataset)
-                #TODO: decide what to add between the I element and the J one
                 if(oldDataset["ATT:Name"][i] not in list_names_dataset):
                     # print("done")
                     # print(oldDataset["ATT:Name"][i])
@@ -432,14 +518,32 @@ def remove_name_duplicate_jaro(oldDataset):
                     list_names_dataset.append(oldDataset["ATT:Name"][i])
                     list_names_dataset.append(oldDataset["ATT:Name"][j])
                     #if some element which are detected as similarity were add inside the Dataset they must be deleted
-                #we can use name since there are no duplicates 
-                name = oldDataset["ATT:Name"][j]
-                if(name in list_names_dataset):
-                    if(name in true_dataset["ATT:Name"]):
-                        #index of the element to remove from the true dataset
-                        index = true_dataset["ATT:Name"].index(name)
+                #we can use name since there are no duplicates
+                #first remove both elements, then add the single one (can be made of combination between the two)
+                namei = oldDataset["ATT:Name"][i]
+                namej = oldDataset["ATT:Name"][j]
+                if(namej in list_names_dataset and namei in list_names_dataset):
+                    if(namej in true_dataset["ATT:Name"] and namei in true_dataset["ATT:Name"]):
+                        indexj = true_dataset["ATT:Name"].index(namej)
+                        compare = {}
                         for elem in oldDataset:
-                            del true_dataset[elem][index]
+                            compare[elem]=[]
+                            compare[elem].append(oldDataset[elem][j])
+                            del true_dataset[elem][indexj]
+                        indexi = true_dataset["ATT:Name"].index(namei)
+                        #elements to compare (duplicates)
+                        for elem in oldDataset:
+                            compare[elem].append(oldDataset[elem][i])
+                            del true_dataset[elem][indexi]
+                        toAdd = solveConflict(compare)                        
+                        for elem in oldDataset:
+                            true_dataset[elem].append(toAdd[elem][0])
+                # if(namej in list_names_dataset):
+                #     if(namej in true_dataset["ATT:Name"]):
+                #         #index of the element to remove from the true dataset
+                #         indexj = true_dataset["ATT:Name"].index(namej)
+                #         for elem in oldDataset:
+                #             del true_dataset[elem][indexj]
                 # print("------"+str(i))
                 # print(similarity)
                 # print(oldDataset["ATT:Name"][i]+" / "+str(moti))
