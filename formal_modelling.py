@@ -618,6 +618,22 @@ def jaro_distance(s1, s2):
     return (match/ len1 + match / len2 +
             (match - t) / match)/ 3.0
 
+#try to add Postal Code where they are missed based on the commune information of the other elements
+#input: the dataset
+def addPostalCode(dataset):
+    postalCodes = {}
+    length = len(dataset["ATT:Id"])
+    for i in range(0, length):
+        com = dataset["ADD:Commune"][i]
+        pc = dataset["ADD:PostalCode"][i]
+        if(com != "" and pc > 10000 and com not in postalCodes):
+            #save this mapping
+            postalCodes[com] = pc
+        if(com != "" and pc < 10000 and com in postalCodes):
+            #add the postal code
+            dataset["ADD:PostalCode"][i] = postalCodes[com]
+    return dataset
+
 #assign IDs to each entity
 #input: the dataset already with the final schema, cleaned, casted and without attraction duplicates
 #output: the dataset with correct ids assigned to it
@@ -697,6 +713,7 @@ dataset = mergeAllDatasets()
 dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
+dataset = addPostalCode(dataset)
 dataset = assignId(dataset)
-#cf.printDataset(dataset, False)
-save_CSV(dataset)
+# cf.printDataset(dataset, False)
+# save_CSV(dataset)
