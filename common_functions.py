@@ -72,6 +72,19 @@ def castBool(listElem, default=False):
             ret.append(bool(default))
     return ret
 
+#cast a list of strings into a list of strings
+#input: the list of string elements to be cast, the default value for missing elements 
+def castString(listElem, default=""):
+    ret = []
+    for elem in listElem:
+        #the string is an integer or float
+        if(elem != 'None' and elem != ''):
+            ret.append(elem)
+        else:
+            ret.append(default)
+    return ret
+
+
 #list of interesting categories for both csv and json files
 #input: txt file with the interesting categories
 #output: the list of interesting categories

@@ -219,8 +219,7 @@ def castDataset(oldDataset):
         dataset[elem].extend(cf.castInt(oldDataset[elem], -1))
     
     for elem in stringList:
-        #TODO: handle strange strings that represent "", like "None"
-        dataset[elem].extend(oldDataset[elem])
+        dataset[elem].extend(cf.castString(oldDataset[elem], ''))
     
     for elem in booleanString:
         dataset[elem].extend(cf.castBool(oldDataset[elem], False))
@@ -700,9 +699,5 @@ dataset = cleanDataset(dataset)
 dataset = castDataset(dataset)
 dataset = removeDuplicates(dataset)
 dataset = assignId(dataset)
-#cf.printDataset(dataset, False)
-#save_CSV(dataset)
-
-
-# for elem in dataset:
-#     print(str(elem)+" "+str(len(dataset[elem])))
+cf.printDataset(dataset, False)
+# save_CSV(dataset)
