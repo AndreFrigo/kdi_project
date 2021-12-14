@@ -629,6 +629,9 @@ def addPostalCode(dataset):
         if(com != "" and pc > 10000 and com not in postalCodes):
             #save this mapping
             postalCodes[com] = pc
+    for i in range(0, length):
+        com = dataset["ADD:Commune"][i]
+        pc = dataset["ADD:PostalCode"][i]
         if(com != "" and pc < 10000 and com in postalCodes):
             #add the postal code
             dataset["ADD:PostalCode"][i] = postalCodes[com]
@@ -716,4 +719,4 @@ dataset = removeDuplicates(dataset)
 dataset = addPostalCode(dataset)
 dataset = assignId(dataset)
 # cf.printDataset(dataset, False)
-# save_CSV(dataset)
+save_CSV(dataset)
