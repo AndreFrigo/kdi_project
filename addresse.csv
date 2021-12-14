@@ -1,0 +1,170 @@
+﻿ADD:Id;ADD:City;ADD:Commune;ADD:PostalCode;ADD:Province;ADD:Street;ADD:StreetNumber
+0;Pozza di Fassa;;38036;;Piaza de Sèn Nicolò, ;5
+1;Moena;;38035;;Passo San Pellegrino;
+2;Cavalese;;38033;;Via Cermis;
+3;Baselga di Piné;;38042;;Via dello Stadio, ;17
+4;Pergine Valsugana;;38057;;Località Costa, ;1
+5;Varena;;38030;;Loc. Passo di Lavazè;
+6;Trento;;38123;;Via Fersina - Località Ghiaie;
+7;Trento;;38123;;Monte Bondone;
+8;Lago di Tesero;;38038;;via Stazione ;4
+9;Alba di Canazei;;38030;;Streda de Doleda, ;10
+11;CEMBRA;;38034;;Loc. Stont;
+13;Pergine Valsugana;;38057;;Via Crivelli, ;23
+14;Castello Tesino;;38053;;Loc. Parco La Cascatella;
+15;Vason;;38123;;Strada del Vason, ;93
+16;Trento;;38123;;Strada di Vason, ;83
+18;Trento;;38122;;Via Monte Grappa, ;1
+19;Monte Bondone;;38123;;Pista da sci - Monte Bondone;
+20;Monte Bondone;;38123;;Loc. Viote, ;6
+21;Villazzano;;38123;;Strada per Maranza, ;23
+22;Viote;;38123;;Via delle Caserme, ;5
+23;Vason;;38123;;Piazza Centrale, Loc. Vason;
+24;BASELGA DI PINE';;38042;;MALGA SPRUGGIO ALTA Fraz. SPRUGGIO ALTO;
+25;VALDA;;38030;;Località Potzmauer;
+26;Monte Bondone;;38123;;Strada di Vason, ;84
+28;Pergine Valsugana;;38057;;Fraz. Canezza;
+29;Pergine Valsugana;;38057;;Via Dosseti, ;12
+30;Predazzo (TN);;38037;;Corso Dolomiti 23/b.;
+31;Cavalese;;38033;;Loc. Marco;
+32;Predazzo (TN);;38037;;Loc. Stalimen;
+33;Cavalese;;38033;;Piazzale Funivia. via Cermis,;2
+34;Cavalese;;38033;;Alpe Cermis c/o Eurotel;
+35;Cavalese;;38033;;Doss dei Laresi;
+36;Cavalese;;38033;;via Cascata ;7
+37;PREDAZZO;;38037;;LOC. ALL'ISCHIA SOTTO SASSA;
+38;CARANO;;38033;;LOC. CALVELLO, ;10
+39;BELLAMONTE;;38030;;Via Cece, ;16
+40;CALCERANICA AL LAGO;;38050;;VIALE VENEZIA, ;10
+41;PIEVE TESINO;;38050;;LOC. QUISTAON, ;1
+42;CALCERANICA AL LAGO;;38050;;VIALE VENEZIA, ;14
+43;PERGINE VALSUGANA;;38057;;LOC. VALCANOVER, ;77
+44;CASTELLO TESINO;;38053;;LOC. SOTTOMOLIZZA, ;1
+45;CALCERANICA AL LAGO;;38050;;VIA PENISOLA VERDE, ;5
+46;CALDONAZZO;;38052;;VIA LUNGOLAGO, ;4
+47;PIEVE TESINO;;38050;;LOCALITA' VAL MALENE;
+48;CALCERANICA AL LAGO;;38050;;VIA LUNGO LAGO, ;70
+49;PERGINE VALSUGANA;;38057;;VIA DEI PESCATORI, ;48
+50;LEVICO TERME;;38056;;LOC. PLEINA, ;5
+51;CASTELLO TESINO;;38053;;LOC. CELADO;
+52;CALCERANICA AL LAGO;;38050;;VIALE VENEZIA, ;6
+53;TORCEGNO;;38050;;LOC. LOBEA, ;1
+54;CALCERANICA AL LAGO;;38050;;VIALE TRENTO, ;42
+55;LEVICO TERME;;38056;;LOC. COSTA, ;3
+56;CALCERANICA AL LAGO;;38050;;VIA DEI PESCATORI, ;1
+57;obereggen;;39050;;Obereggen, ;38
+59;Capriana;;38030;;Loc. Monte Corno;
+60;;;-1;; - Capriana ;38030
+61;San Martino di Castrozza;;38054;;Loc. Bocche;
+62;CAVALESE;;38030;;località Doss dei Laresi via Chiesa ;93
+64;Bellamonte (TN);;38037;;Loc. La Morea;
+65;Ziano di Fiemme;;38030;;Val di Sadole;
+68;Predazzo (TN);;38037;;Passo Feudo;
+69;CAVALESE;;38030;;Loc Alpe di Cermis  ;1
+70;Ziano di Fiemme;;38030;;Loc. Sadole;
+71;;;-1;; - Trodena ;39040
+72;Predazzo;;38037;;Passo Rolle;
+74;Passo di Lavazè;;38030;;Passo Lavazè;
+77;;;-1;;Strada provinciale del passo Manghen -   ;31
+78;Predazzo;;38037;;Loc. Gardoné;
+79;Molina di Fiemme;;38030;;Loc. Arodolo;
+80;Moena (TN);;38035;;Alpe di Lusia;
+81;Valfloriana;;38040;;Loc. Malga Sass;
+82;Tesero;;38038;;Loc Pampeago (Obereggen);
+83;;;-1;; - Passo Rolle ;38030
+84;Predazzo (TN);;38037;;Cima Cavignon;
+85;;;-1;; - Anterivo ;39040
+86;Nova Ponente;;39050;;Obereggen, ;39
+87;Predazzo (TN);;38037;;Loc. Valmaggiore;
+88;San Martino di Castrozza;;38054;;Passo Rolle ;
+91;Predazzo (TN);;38037;;Loc. Stalimen ;3
+92;Tesero;;38038;;Via Lago;
+93;Bellamonte (TN);;38037;;Loc. Castelir c/o Partenza Impianti;
+94;Tesero;;38038;;loc. Pampeago;
+95;Tesero;;38038;;Loc.Pampeago, ;9
+96;Ziano di Fiemme;;38030;;Via Prof. Vanzetta ;8
+97;Tesero;;38038;;Loc.Piera, ;4
+98;;;-1;; - Paneveggio ;38037
+99;Cavalese;;38033;;Via Cermis, ;1
+100;Carano;;38030;;Loc. Veronza;
+101;Predazzo (TN);;38037;;via IX Novembre;
+102;Lago di Tesero;;38038;;Via Stazione ;4
+103;Predazzo (TN);;38037;;via F. Gialle ;40
+104;Castello di Fiemme;;38030;;Via Roma ;66
+105;Predazzo (TN);;38037;;Loc. Stamelin ;4
+107;Pozza di Fassa;Comun_general_de_Fascia;38036;;;
+109;;Comun_general_de_Fascia;-1;;Passo di San Pellegrino;
+113;;Comun_general_de_Fascia;-1;;Passo Pordoi;
+115;Mazzin;Comun_general_de_Fascia;-1;;;
+117;Soraga;Comun_general_de_Fascia;-1;;;
+118;;Comun_general_de_Fascia;-1;;Passo Fedaia;
+119;;Comun_general_de_Fascia;-1;;Passo S. Pellegrino;
+121;;Comun_general_de_Fascia;-1;; Passo San Pellegrino;
+122;Pozza di Fassa;Comun_general_de_Fascia;38036;;Via Meida 38036;
+124;;Comune_di_Mori;-1;;;
+126;;Comune_di_Peio;-1;;Piazza Municipio;4
+127;Pelugo;Comune_di_Pelugo;-1;;;
+128;Prezzo;Comune_di_Pieve_di_Bono-Prezzo;38085;;;
+131;;Comune_di_Porte_di_Rendena;-1;;;
+132;Villa Rendena;Comune_di_Porte_di_Rendena;38094;;;
+133;;Comune_di_Predaia;-1; tn ;;
+134;Tres;Comune_di_Predaia;-1; tn ;;
+135;;Comune_di_Revo;-1;;;
+136;Trento;Comune_di_Roncegno_Terme;38050;; Piazza Santa Margherita;3
+138;San Lorenzo in Banale;Comune_di_San_Lorenzo_Dorsino;38078;;;1
+139;;Comune_di_Sant_Orsola;38050;;;
+140;Lardaro;Comune_di_Sella_Giudicarie;38087;;;
+141;Breguzzo;Comune_di_Sella_Giudicarie;38087;;Via Rocca;
+142;Sover;Comune_di_Sover;38048;;Via Domenico Santuari 1 - Montesover - 38048 Sover;1
+143;Tenna;Comune_di_Tenna;-1;;Via S. Valentino;23
+144;Terragnolo;Comune_di_Terragnolo;38064; TN;;
+146;Daone;Comune_di_Valdaone;-1;;;
+147;Vezzano;Comune_di_Vallelaghi;38070;;;
+148;Trento;Comune_di_Vallelaghi;-1;; Via Stoppani;5
+149;Vermiglio;Comune_di_Vermiglio;-1;;;
+150;Tassullo;Comune_di_Ville_d_Anaunia;-1;;;
+151;Tuenno;Comune_di_Ville_d_Anaunia;38019;;;
+152;Aldino;Comune_di_Ville_d_Anaunia;38019; TN;Strada Provinciale 73 Destra Anaunia;73
+153;Strembo;Comunita_Territoriale_della_Val_di_Fiemme;38080;;38080 Strembo - Via Nazionale 24;24
+154;Castello Tesino;Comunita_Valsugana_e_Tesino;-1;;;
+155;;Comunita_Valsugana_e_Tesino;-1;;;
+156;;Comunita_Valsugana_e_Tesino;38050;;;
+157;Strigno;Comunita_Valsugana_e_Tesino;38051;;;
+158;Castelnuovo;Comunita_Valsugana_e_Tesino;38051;;;
+159;Ospedaletto;Comunita_Valsugana_e_Tesino;38051;;;
+160;Scurelle;Comunita_Valsugana_e_Tesino;38051;;;
+161;;Comunita_della_Paganella;-1;;;
+162;Andalo;Comunita_della_Paganella;-1;;;
+163;Spormaggiore;Comunita_della_Paganella;-1;;;
+164;Fai della Paganella;Comunita_della_Paganella;-1;;;
+165;Calavino;Comunita_della_Valle_dei_Laghi;38070;;Via Caffaro - 38070 Sarche di Calavino TN;
+166;Daone;Comunita_delle_Giudicarie;-1; TN;;
+167;Ora;Comunita_delle_Giudicarie;38081; TN; Via Valle;
+168;Ala;Comunita_delle_Giudicarie;38075; TN; Via 3 Novembre;3
+169;Caderzone Terme;Comunita_delle_Giudicarie;38080; TN;;
+170;Stenico;Comunita_delle_Giudicarie;38071; TN;;
+172;Comano Terme;Comunita_delle_Giudicarie;38070; TN;;
+173;;Comunita_delle_Giudicarie;-1;;;
+174;Lardaro;Comunita_delle_Giudicarie;-1;;;
+176;Arco;altopianodellavigolana;-1;;;
+178;Bedollo;bedollo;-1;;"Passo del Redebus - Localit&agrave; Acqua Fredda (1440 s.l.m.) - Bedollo";
+180;Brez;brez;-1;;;
+182;Don;carisolo;-1;;;
+184;Cles;cles;-1;;;
+185;Cles;cles;-1;;;37
+186;Aldino;cloz;38021; TN;;
+187;Comano Terme;comanoterme;-1;;;
+188;;comanoterme;-1;;;
+189;Dimaro;dimarofolgarida;38025;;;
+192;;fiave;-1;;;
+193;Folgaria;folgaria;-1;;;
+194;;folgaria;38064; TN;;
+198;Lavarone;lavarone;-1;;;
+199;Levico Terme;levico-terme;-1;;;
+201;Mezzocorona;mezzocorona;-1;;;32
+202;Molveno;molveno;-1;;;
+203;Tesero;;38038;;Loc. Piera, ;4
+204;Predazzo (TN);;38037;;Corso Dolomiti 3/a.;
+206;Arco;Comune_di_Pinzolo;-1;;;
+207;Caderzone Terme;Comunita_delle_Giudicarie;-1; TN;;
+208;Spormaggiore;faidellapaganella;38010;;Via Alt Spaur;82
