@@ -245,7 +245,7 @@ def Read_JSON(jsonFile="POI_Trentino.json"):
         if(data[str(i)]["content"]["poiData"]["contact"]!=None and data[str(i)]["content"]["poiData"]["contact"]["name"]!={} ):
             line[6]=str(data[str(i)]["content"]["poiData"]["contact"]["name"]["IT"])
         if(data[str(i)]["content"]["poiData"]["timetable"] != {}):
-            line[7]=str(data[str(i)]["content"]["poiData"]["timetable"])
+            line[7]=str(data[str(i)]["content"]["poiData"]["timetable"]["IT"])
         if(data[str(i)]["content"]["poiData"]["contact"]!=None):
             if(data[str(i)]["content"]["poiData"]["contact"]["phone"]!= None):
                 line[9]=str(data[str(i)]["content"]["poiData"]["contact"]["phone"])
