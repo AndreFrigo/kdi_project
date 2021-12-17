@@ -643,9 +643,10 @@ def addPostalCode(dataset):
 def assignId(dataset):
     length = len(dataset["ATT:Id"])
     #Location
-    cont = 0
+    cont = 1
     #keys pairs of loc and lon, values the ids assigned
     locations = {}
+    locations[(str(-1.0), str(-1.0))] = 0
     for i in range(0, length):
         lat = str(dataset["LOC:Latitude"][i])
         lon = str(dataset["LOC:Longitude"][i])
@@ -657,8 +658,9 @@ def assignId(dataset):
         dataset["LOC:Id"][i] = str(locations[(lat,lon)])
     
     #Address
-    cont = 0
+    cont = 1
     address = {}
+    address[('','',str(-1),'','','')] = 0
     for i in range (0, length):
         a = (str(dataset['ADD:City'][i]), str(dataset['ADD:Commune'][i]), str(dataset['ADD:PostalCode'][i]), str(dataset['ADD:Province'][i]), str(dataset['ADD:Street'][i]), str(dataset['ADD:StreetNumber'][i]))
         if a not in address:
@@ -675,8 +677,9 @@ def assignId(dataset):
         cont +=1
     
     #Company
-    cont = 0
+    cont = 1
     companies = {}
+    companies[('', '', str(-1.0), '', '')] = 0
     for i in range(0, length):
         com = (str(dataset['COM:Name'][i]), str(dataset['COM:OpeningHours'][i]), str(dataset['COM:Price'][i]), str(dataset['COM:Telephone'][i]), str(dataset['COM:Url'][i]))
         if com not in companies:
@@ -705,8 +708,8 @@ def save_CSV(dataset):
     dataset_attraction=dataset_JSON[['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','LOC:Id','ADD:Id']]
     dataset_attraction.to_csv(r'attraction.csv',sep=';',index=False, encoding='utf-8-sig')
     #company
-    dataset_JSON['LOC:Id']=len(dataset['ATT:Id'])*['']
-    dataset_JSON['ADD:Id']=len(dataset['ATT:Id'])*['']
+    dataset_JSON['LOC:Id']=len(dataset['ATT:Id'])*['0']
+    dataset_JSON['ADD:Id']=len(dataset['ATT:Id'])*['0']
     dataset_company=pd.DataFrame(dataset_JSON[['COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','ADD:Id']])
     dataset_company.drop_duplicates(subset="COM:Id",keep='first',inplace=True)
     dataset_company.to_csv(r'company.csv',sep=';',index=False, encoding='utf-8-sig')

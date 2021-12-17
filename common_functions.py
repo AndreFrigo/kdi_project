@@ -40,7 +40,10 @@ def castFloat(listElem, default):
     for elem in listElem:
         #the string is an integer or float
         if(re.match('^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$', elem)):
-            ret.append(float(elem))
+            if (float(elem) > 0.01):
+                ret.append(float(elem))
+            else:
+                ret.append(float(default))
         else:
             ret.append(float(default))
     return ret
@@ -52,7 +55,10 @@ def castInt(listElem, default):
     for elem in listElem:
         #the string is an integer or float
         if(re.match('^[0-9]+$', elem)):
-            ret.append(int(elem))
+            if(int(elem) != 0):
+                ret.append(int(elem))
+            else:
+                ret.append(int(default))
         else:
             ret.append(int(default))
     return ret
