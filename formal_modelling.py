@@ -219,7 +219,7 @@ def castDataset(oldDataset):
         dataset[elem].extend(cf.castInt(oldDataset[elem], -1))
     
     for elem in stringList:
-        dataset[elem].extend(cf.castString(oldDataset[elem], ' '))
+        dataset[elem].extend(cf.castString(oldDataset[elem], 'none'))
     
     for elem in booleanString:
         dataset[elem].extend(cf.castBool(oldDataset[elem], False))
@@ -660,7 +660,7 @@ def assignId(dataset):
     #Address
     cont = 1
     address = {}
-    address[(' ',' ',str(-1),' ',' ',' ')] = "ADD0"
+    address[('none','none',str(-1),'none','none','none')] = "ADD0"
     for i in range (0, length):
         a = (str(dataset['ADD:City'][i]), str(dataset['ADD:Commune'][i]), str(dataset['ADD:PostalCode'][i]), str(dataset['ADD:Province'][i]), str(dataset['ADD:Street'][i]), str(dataset['ADD:StreetNumber'][i]))
         if a not in address:
@@ -679,7 +679,7 @@ def assignId(dataset):
     #Company
     cont = 1
     companies = {}
-    companies[(' ', ' ', str(-1.0), ' ', ' ')] = "COM0"
+    companies[('none', 'none', str(-1.0), 'none', 'none')] = "COM0"
     for i in range(0, length):
         com = (str(dataset['COM:Name'][i]), str(dataset['COM:OpeningHours'][i]), str(dataset['COM:Price'][i]), str(dataset['COM:Telephone'][i]), str(dataset['COM:Url'][i]))
         if com not in companies:
