@@ -72,7 +72,7 @@ def castBool(listElem, default=False):
     for elem in listElem:
         if(elem == "True" or elem == "true"):
             ret.append(True)
-        elif(elem == "False" or elem == "frue"):
+        elif(elem == "False" or elem == "false"):
             ret.append(False)
         else:
             ret.append(bool(default))
@@ -80,11 +80,11 @@ def castBool(listElem, default=False):
 
 #cast a list of strings into a list of strings
 #input: the list of string elements to be cast, the default value for missing elements 
-def castString(listElem, default=""):
+def castString(listElem, default=" "):
     ret = []
     for elem in listElem:
         #the string is an integer or float
-        if(elem != 'None' and elem != ''):
+        if(elem != 'None' and elem != '' and elem!=' '):
             ret.append(elem)
         else:
             ret.append(default)
