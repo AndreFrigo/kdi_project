@@ -1,0 +1,54 @@
+PREFIX prop: <http://knowdive.disi.unitn.it/etype#>
+select ?attraction ?name where { 
+	?attraction prop:has_type_GID-31834_Type-35453  "Località turistica" ;
+	prop:has_address_GID-93733_Type-82091 ?add ;
+    prop:has_name_GID-2_Type-82091 ?name .
+	?add prop:has_commune_GID-45992_Type-45803 "Comune_di_Pieve_di_Bono-Prezzo" .
+}
+
+
+
+PREFIX prop: <http://knowdive.disi.unitn.it/etype#>
+select ?lat ?lon ?street ?streetnum ?city ?commune ?postalcode ?province where { 
+	?attraction prop:has_name_GID-2_Type-82091 "Passo San Pellegrino" ;
+	prop:has_location_GID-93733_Type-82091 ?loc;
+  	prop:has_address_GID-93733_Type-82091 ?add.
+    ?loc prop:has_latitude_GID-46263_Type-779 ?lat;
+	prop:has_longitude_GID-46270_Type-779 ?lon.
+    ?add prop:has_city_GID-45969_Type-45803 ?city;
+	prop:has_street_GID-24034_Type-45803 ?street;
+ 	prop:has_street_number_GID-300000_Type-45803 ?streetnum;
+    prop:has_postal_code_GID-34110_Type-45803 ?postalcode;
+    prop:has_commune_GID-45992_Type-45803 ?commune;
+    prop:has_province_GID-46567_Type-45803 ?province. 
+}
+
+
+
+PREFIX prop: <http://knowdive.disi.unitn.it/etype#>
+select ?description where { 
+	?attraction prop:has_name_GID-2_Type-82091 "Passo San Pellegrino" ;
+	prop:has_description_GID-3_Type-35453 ?description.
+}
+
+
+
+
+PREFIX prop: <http://knowdive.disi.unitn.it/etype#>
+select ?name ?website ?telephone where { 
+	?attraction prop:has_name_GID-2_Type-82091 "CAMPING RIVIERA" ;
+	prop:has_company_GID-83703_Type-35453 ?com.
+    ?com prop:has_url_GID-34123_Type-43715 ?website;
+	prop:has_telephone_GID-34494_Type-43715 ?telephone;
+ 	prop:has_name_GID-2_Type-82091 ?name.
+}
+
+
+
+
+PREFIX prop: <http://knowdive.disi.unitn.it/etype#>
+select ?name where { 
+	?company prop:has_name_GID-2_Type-82091  " SPORT CERMIS" ;
+	prop:has_attraction_GID-111283_Type-43715 ?attraction.
+    ?attraction prop:has_name_GID-2_Type-82091 ?name .
+}
