@@ -172,13 +172,7 @@ def split_adress(oldDataset):
                     #commune
             # print(list_adress)
             dataset_adress.append(list_adress)
-    dataset_adress=pd.DataFrame(dataset_adress,columns=column_names)
-    # if 'Comune' in oldDataset:
-    #     print("")
-
-    # if 'Indirizzo' in oldDataset:
-    #     print(oldDataset["Indirizzo"])
-    
+    dataset_adress=pd.DataFrame(dataset_adress,columns=column_names)    
     return dataset_adress
     
 
@@ -427,7 +421,6 @@ def solveConflict(conflicts):
         ret["COM:Price"].append(conflicts["COM:Price"][1])
     
     #for telephone keep both if they are not the same 
-    #TODO: maybe do a function to compare exactly the telephone number?
     if(conflicts["COM:Telephone"][0] != conflicts["COM:Telephone"][1]):
         if(conflicts["COM:Telephone"][0] != "" and conflicts["COM:Telephone"][1] != ""):
             ret["COM:Telephone"].append(str(conflicts["COM:Telephone"][0]) + ", " + str(conflicts["COM:Telephone"][1]))
@@ -466,7 +459,6 @@ def solveConflict(conflicts):
         
 
 def remove_name_duplicate_jaro(oldDataset):
-    #TODO: find out if it really deletes only duplicates
     #In total we found 26 duplicates (after the removeNameDuplicates function)
     count=0
     list_j=[]
@@ -540,12 +532,6 @@ def remove_name_duplicate_jaro(oldDataset):
                         toAdd = solveConflict(compare)                        
                         for elem in oldDataset:
                             true_dataset[elem].append(toAdd[elem][0])
-                # if(namej in list_names_dataset):
-                #     if(namej in true_dataset["ATT:Name"]):
-                #         #index of the element to remove from the true dataset
-                #         indexj = true_dataset["ATT:Name"].index(namej)
-                #         for elem in oldDataset:
-                #             del true_dataset[elem][indexj]
                 # print("------"+str(i))
                 # print(similarity)
                 # print(oldDataset["ATT:Name"][i]+" / "+str(moti))
@@ -693,7 +679,6 @@ def save_CSV(dataset):
     
     column_names = ['ATT:Id','ATT:Name','ATT:ParkingArea','ATT:Description','ATT:Type','COM:Id','COM:Name','COM:OpeningHours','COM:Price','COM:Telephone','COM:Url','LOC:Id','LOC:Latitude','LOC:Longitude','ADD:Id','ADD:City','ADD:Commune','ADD:PostalCode','ADD:Province','ADD:Street','ADD:StreetNumber']
     dataset_JSON=pd.DataFrame(dataset,columns=column_names)
-    #dataset_JSON.to_csv(r'dataset.csv',sep=';',index=False, encoding='utf-8-sig')
     #location
     dataset_location=pd.DataFrame(dataset_JSON[['LOC:Id','LOC:Latitude','LOC:Longitude']])
     dataset_location.drop_duplicates(subset="LOC:Id",keep='first',inplace=True)
